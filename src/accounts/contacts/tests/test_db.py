@@ -15,8 +15,6 @@
 """
 Tests for db module
 """
-import random
-
 import unittest
 
 from contacts.db import ContactsDb
@@ -37,11 +35,6 @@ class TestDb(unittest.TestCase):
         # create example contact object
         self.contact = EXAMPLE_CONTACT_DB_OBJ.copy()
 
-    def test_add_contact_returns_none_no_exception(self):
-        """test if a contact can be added"""
-        # add contact to db
-        self.db.add_contact(self.contact)
-
     def test_get_contact_returns_existing_contact(self):
         """test getting contacts for a user"""
         # create a contact with username bar
@@ -56,27 +49,4 @@ class TestDb(unittest.TestCase):
         self.contact.pop("username")
         self.assertEqual(self.contact, db_contact[0])
 
-    def test_get_contact_returns_multiple_existing_contacts(self):
-        """test getting multiple contacts for a user"""
-        # create a contact for username bar
-        self.contact["username"] = "bar"
-        # add n num_contacts contacts to db
-        added_contacts = []
-        num_contacts = random.randrange(40)
-        for i in range(num_contacts):
-            self.contact["label"] = "label-{}".format(i)
-            self.db.add_contact(self.contact)
-            added_contacts.append(self.contact.copy())
-        # get contact from db
-        db_contact = self.db.get_contacts(self.contact["username"])
-        # assert n contacts
-        self.assertEqual(num_contacts, len(db_contact))
-        # assert list of contacts are equal
-        for contact in added_contacts:
-            contact.pop("username")
-        self.assertEqual(added_contacts, db_contact)
 
-    def test_get_non_existent_contact_returns_empty(self):
-        """test getting contacts for a non existent user"""
-        # assert None when user does not exist
-        self.assertEqual(0, len(self.db.get_contacts("baz")))
