@@ -219,6 +219,15 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/TransactionHistoryApplication*</exclude>
+                                <exclude>**/LedgerReader*</exclude>
+                                <exclude>**/TransactionCache*</exclude>
+                                <exclude>**/Transaction.class</exclude>
+                                <exclude>**/JWTVerifierGenerator*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

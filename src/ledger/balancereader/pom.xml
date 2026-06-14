@@ -218,6 +218,15 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/BalanceReaderApplication*</exclude>
+                                <exclude>**/LedgerReader*</exclude>
+                                <exclude>**/BalanceCache*</exclude>
+                                <exclude>**/Transaction.class</exclude>
+                                <exclude>**/JWTVerifierGenerator*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
