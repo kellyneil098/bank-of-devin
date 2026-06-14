@@ -209,6 +209,14 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/LedgerWriterApplication*</exclude>
+                                <exclude>**/Transaction.class</exclude>
+                                <exclude>**/ExceptionMessages.class</exclude>
+                                <exclude>**/JWTVerifierGenerator*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
