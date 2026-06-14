@@ -30,7 +30,7 @@
       "submitted_at": null
     }
   ],
-  "review_verdict": "changes_requested",
+  "review_verdict": "approved",
   "human_rework": true,
   "mutation_score": null,
   "files_changed": [
