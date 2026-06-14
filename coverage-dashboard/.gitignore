@@ -4,3 +4,7 @@ dist/
 .vite/
 coverage/
 .eslintcache
+
+# The repo-root .gitignore ignores any `lib/` dir (Python template); keep ours.
+!src/lib/
+!src/lib/**

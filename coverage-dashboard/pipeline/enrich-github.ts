@@ -57,17 +57,23 @@ export function isDevinLogin(login: string | null | undefined): boolean {
  */
 export function reduceReviewVerdict(reviews: PullReview[]): ReviewVerdict {
   if (reviews.length === 0) return "none";
-  let hasChangesRequested = false;
-  let hasApproved = false;
-  let hasCommented = false;
+  // Collapse to each author's effective state first (GitHub semantics): a
+  // reviewer's verdict is their latest APPROVED/CHANGES_REQUESTED review, and a
+  // later COMMENTED review does not override that earlier decision. The GitHub
+  // API returns reviews oldest-first, so the last write per author wins.
+  const effectiveByAuthor = new Map<string, ReviewState>();
   for (const r of reviews) {
-    if (r.state === "CHANGES_REQUESTED") hasChangesRequested = true;
-    else if (r.state === "APPROVED") hasApproved = true;
-    else if (r.state === "COMMENTED") hasCommented = true;
+    if (r.state === "APPROVED" || r.state === "CHANGES_REQUESTED") {
+      effectiveByAuthor.set(r.author, r.state);
+    } else if (r.state === "COMMENTED" && !effectiveByAuthor.has(r.author)) {
+      effectiveByAuthor.set(r.author, "COMMENTED");
+    }
   }
-  if (hasChangesRequested) return "changes_requested";
-  if (hasApproved) return "approved";
-  if (hasCommented) return "commented";
+  const states = new Set(effectiveByAuthor.values());
+  // Across authors, a single outstanding "changes requested" still blocks.
+  if (states.has("CHANGES_REQUESTED")) return "changes_requested";
+  if (states.has("APPROVED")) return "approved";
+  if (states.has("COMMENTED")) return "commented";
   return "none";
 }
 

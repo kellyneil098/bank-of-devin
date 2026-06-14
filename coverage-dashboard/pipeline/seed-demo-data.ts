@@ -309,7 +309,7 @@ const EVENTS: MergeEvent[] = [
       tests_added_estimate: 9,
       session_url: "https://app.devin.ai/sessions/7c41a9e2d05b4c8fa3e16b7290d4f5e8",
       reviews: [devinReview(), humanChangesRequested(), humanApproval()],
-      review_verdict: "changes_requested",
+      review_verdict: "approved",
       human_rework: true,
       mutation_score: null,
       files_changed: [
