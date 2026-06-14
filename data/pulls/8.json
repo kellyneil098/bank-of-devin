@@ -1,0 +1,35 @@
+{
+  "number": 8,
+  "title": "Add unit tests for TransactionValidator and LedgerWriterController",
+  "branch": "devin/1780980011-ledgerwriter-validator-tests",
+  "created_at": "2026-06-06T12:40:00Z",
+  "merged_at": "2026-06-06T16:00:00Z",
+  "author": "devin-ai-integration[bot]",
+  "additions": 248,
+  "deletions": 0,
+  "tests_added_estimate": 8,
+  "session_url": "https://app.devin.ai/sessions/5d3e8b026c1a4f93b7e21d4a8f60c9a2",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": null,
+      "body": "Devin review: automated checks passed."
+    },
+    {
+      "author": "kellyneil098",
+      "state": "APPROVED",
+      "is_devin_review": false,
+      "submitted_at": null
+    }
+  ],
+  "review_verdict": "approved",
+  "human_rework": false,
+  "mutation_score": null,
+  "files_changed": [
+    "src/ledger/ledgerwriter/src/main/java/anthos/samples/bankofanthos/ledgerwriter/TransactionValidator.java",
+    "src/ledger/ledgerwriter/src/main/java/anthos/samples/bankofanthos/ledgerwriter/LedgerWriterController.java"
+  ],
+  "merge_commit_sha": "55cada515e28d953bfc63daa73830a2686c4dcfa"
+}

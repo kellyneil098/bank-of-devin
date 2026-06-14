@@ -1,0 +1,35 @@
+{
+  "number": 11,
+  "title": "Add pytest coverage for contacts PII persistence and validation",
+  "branch": "devin/1781200310-contacts-pii-tests",
+  "created_at": "2026-06-11T14:25:00Z",
+  "merged_at": "2026-06-11T18:00:00Z",
+  "author": "devin-ai-integration[bot]",
+  "additions": 224,
+  "deletions": 0,
+  "tests_added_estimate": 7,
+  "session_url": "https://app.devin.ai/sessions/c0b7e4a1582d4f63a9e8d1740b3c6f25",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": null,
+      "body": "Devin review: automated checks passed."
+    },
+    {
+      "author": "kellyneil098",
+      "state": "APPROVED",
+      "is_devin_review": false,
+      "submitted_at": null
+    }
+  ],
+  "review_verdict": "approved",
+  "human_rework": false,
+  "mutation_score": null,
+  "files_changed": [
+    "src/accounts/contacts/contacts.py",
+    "src/accounts/contacts/db.py"
+  ],
+  "merge_commit_sha": "b49e944e73c14b3d4d4299c9bdc2a19e8d40ec9a"
+}
