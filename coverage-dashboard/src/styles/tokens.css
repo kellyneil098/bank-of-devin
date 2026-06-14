@@ -1,0 +1,260 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Design tokens lifted verbatim from the Cognition Deck design system
+ * (colors_and_type.css). Do not introduce new colors/spacing/type here —
+ * consume these tokens via var().
+ */
+
+/* ---- Fonts (Google Fonts: Geist + Geist Mono) ---- */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* ===== COLOR — Foundations ===== */
+
+  /* Paper / surfaces — warm off-white, not pure white. Reads well on
+     unknown projectors without washing out. */
+  --paper-0:    #FBFAF6;  /* canvas, slide background */
+  --paper-1:    #F4F2EB;  /* sunken panel, code blocks */
+  --paper-2:    #EAE7DC;  /* divider tint, hairlines */
+
+  /* Ink — near-black with a hint of blue so it pairs with the accent */
+  --ink-0:      #0B0F17;  /* primary text, hero numerals */
+  --ink-1:      #2B3340;  /* body text */
+  --ink-2:      #5C6573;  /* secondary text, captions */
+  --ink-3:      #8A93A1;  /* tertiary, axis labels, meta */
+  --ink-4:      #BFC4CC;  /* disabled, faint rules */
+
+  /* Accent — single deep blue. Used sparingly: highlights,
+     active states, the hero diagram emphasis. */
+  --accent-0:   #173A8A;  /* primary accent — blueprint blue */
+  --accent-1:   #2F58B5;  /* hover / lighter mark */
+  --accent-2:   #D9E3F7;  /* accent tint — fill for callouts */
+  --accent-3:   #EEF2FB;  /* accent wash — large fills */
+
+  /* Crisis — restrained warm signal for the crisis-timeline story.
+     Used ONLY for the second hero diagram + risk indicators. */
+  --signal-0:   #B23A1F;  /* alert / crisis marker */
+  --signal-1:   #E07A55;  /* warning */
+  --signal-2:   #F5E1D6;  /* alert tint */
+
+  /* Positive — for "on track" markers in scheduling diagrams */
+  --good-0:     #2E6F4F;
+  --good-2:     #DCE9DF;
+
+  /* Lines & rules */
+  --rule:       #2B3340;     /* heavy rule (section dividers) */
+  --rule-soft:  #D5D2C5;     /* hairline rule (warm) */
+  --rule-faint: rgba(11,15,23,0.08);
+
+  /* ===== TYPOGRAPHY — Families ===== */
+  --font-sans:  "Geist", "Söhne", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:  "Geist Mono", "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  /* ===== TYPE — Sizes (px on a 1280×720 deck baseline) ===== */
+  --t-hero:        88px;   /* title-slide statement */
+  --t-display:     64px;   /* section header */
+  --t-h1:          48px;   /* slide H1 */
+  --t-h2:          34px;   /* slide H2 */
+  --t-h3:          24px;   /* sub-head, list lead-ins */
+  --t-body-lg:     22px;   /* generous body */
+  --t-body:        18px;   /* body */
+  --t-small:       15px;   /* caption, axis, meta */
+  --t-micro:       12px;   /* footer, page numbers */
+
+  /* ===== TYPE — Weights ===== */
+  --w-light:    300;  /* @kind font */
+  --w-regular:  400;  /* @kind font */
+  --w-medium:   500;  /* @kind font */
+  --w-semibold: 600;  /* @kind font */
+  --w-bold:     700;  /* @kind font */
+
+  /* ===== TYPE — Line height & tracking ===== */
+  --lh-tight:   1.06;  /* @kind font */
+  --lh-snug:    1.18;  /* @kind font */
+  --lh-normal:  1.42;  /* @kind font */
+  --lh-loose:   1.55;  /* @kind font */
+
+  --tr-tight:   -0.022em;
+  --tr-normal:  -0.012em;
+  --tr-wide:    0.08em;     /* eyebrows / labels */
+  --tr-mono:    -0.01em;
+
+  /* ===== SPACING (4pt) ===== */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+
+  /* ===== RADIUS ===== */
+  --r-0:  0px;          /* default — engineering-forward, mostly square */
+  --r-1:  2px;          /* code chips, mono inlines */
+  --r-2:  4px;          /* small UI */
+  --r-3:  8px;          /* cards, callouts */
+
+  /* ===== SHADOWS — very restrained ===== */
+  --shadow-0: none;
+  --shadow-1: 0 1px 0 rgba(11,15,23,0.06);                 /* hairline lift */
+  --shadow-2: 0 1px 0 rgba(11,15,23,0.04),
+              0 10px 28px -16px rgba(11,15,23,0.18);        /* card */
+
+  /* ===== SLIDE GRID ===== */
+  --slide-w:     1280px;
+  --slide-h:     720px;
+  --slide-pad:   72px;     /* default outer padding */
+  --slide-pad-x: 88px;     /* generous horizontal */
+  --gutter:      32px;
+}
+
+/* ============================================================
+   SEMANTIC TYPE — apply directly to elements
+   ============================================================ */
+
+.t-hero, h1.t-hero {
+  font-family: var(--font-sans);
+  font-size: var(--t-hero);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  color: var(--ink-0);
+}
+
+.t-display {
+  font-family: var(--font-sans);
+  font-size: var(--t-display);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  color: var(--ink-0);
+}
+
+.t-h1 {
+  font-family: var(--font-sans);
+  font-size: var(--t-h1);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-normal);
+  color: var(--ink-0);
+}
+
+.t-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--t-h2);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-normal);
+  color: var(--ink-0);
+}
+
+.t-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--t-h3);
+  font-weight: var(--w-semibold);
+  line-height: var(--lh-snug);
+  color: var(--ink-1);
+}
+
+.t-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--t-body-lg);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-loose);
+  color: var(--ink-1);
+}
+
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-normal);
+  color: var(--ink-1);
+}
+
+.t-small {
+  font-family: var(--font-sans);
+  font-size: var(--t-small);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-normal);
+  color: var(--ink-2);
+}
+
+.t-micro {
+  font-family: var(--font-sans);
+  font-size: var(--t-micro);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Eyebrow — a label that sits above titles. Uppercase, mono, tracked. */
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--accent-0);
+}
+
+/* Inline mono — wraps technical terms (.mpp, Schedule Task, Monte Carlo) */
+.mono,
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--tr-mono);
+  color: var(--ink-0);
+  background: var(--paper-1);
+  padding: 0.08em 0.36em;
+  border-radius: var(--r-1);
+  border: 1px solid var(--rule-faint);
+}
+
+/* Used on hero diagrams' inline emphasis */
+.mark {
+  background: var(--accent-2);
+  color: var(--ink-0);
+  padding: 0 0.18em;
+  box-decoration-break: clone;
+}
+
+/* Section divider — used between the two "stories" */
+.section-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+.section-rule--hair {
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* Base resets so slides feel typeset, not webby */
+.deck-base {
+  background: var(--paper-0);
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "ss02", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

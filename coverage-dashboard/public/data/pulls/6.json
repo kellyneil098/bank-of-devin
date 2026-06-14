@@ -1,0 +1,25 @@
+{
+  "number": 6,
+  "title": "Remove python accounts tests",
+  "branch": "devin/1781142004-remove-python-accounts-tests",
+  "created_at": "2026-06-02T09:10:00Z",
+  "merged_at": null,
+  "merge_commit_sha": null,
+  "author": "devin-ai-integration[bot]",
+  "additions": 0,
+  "deletions": 120,
+  "files_changed": [],
+  "tests_added_estimate": 0,
+  "session_url": null,
+  "reviews": [
+    {
+      "author": "kellyneil098",
+      "state": "CHANGES_REQUESTED",
+      "is_devin_review": false,
+      "submitted_at": null
+    }
+  ],
+  "review_verdict": "changes_requested",
+  "human_rework": false,
+  "mutation_score": null
+}
