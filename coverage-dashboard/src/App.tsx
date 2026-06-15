@@ -52,7 +52,6 @@ export default function App() {
   const [source, setSource] = useState<"bundled" | "live">("bundled");
   const [refreshing, setRefreshing] = useState(false);
   const [palette, setPalette] = useState(() => readPalette());
-  const drillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setPalette(readPalette());
@@ -91,21 +90,18 @@ export default function App() {
 
   const selectPoint = useCallback((commitSha: string) => {
     setSelectedSha(commitSha);
-    requestAnimationFrame(() =>
-      drillRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-    );
   }, []);
 
   if (state.kind === "loading") {
     return (
-      <div className="app">
+      <div className="app app--plain">
         <p className="status-banner">Loading coverage data…</p>
       </div>
     );
   }
   if (state.kind === "error") {
     return (
-      <div className="app">
+      <div className="app app--plain">
         <p className="status-banner error">
           Failed to load coverage data: {state.message}
         </p>
@@ -125,7 +121,6 @@ export default function App() {
       refresh={refresh}
       refreshing={refreshing}
       source={source}
-      drillRef={drillRef}
     />
   );
 }
@@ -141,7 +136,6 @@ function Dashboard({
   refresh,
   refreshing,
   source,
-  drillRef,
 }: {
   dataset: Dataset;
   metric: Metric;
@@ -153,7 +147,6 @@ function Dashboard({
   refresh: () => void;
   refreshing: boolean;
   source: "bundled" | "live";
-  drillRef: React.RefObject<HTMLDivElement>;
 }) {
   const { snapshots, pulls, categories } = dataset;
   const latest = snapshots[snapshots.length - 1];
@@ -184,35 +177,136 @@ function Dashboard({
   );
   const meetsBar = compliancePct >= COVERAGE_TARGET_PCT;
 
+  // ----- Slide-deck navigation -----
+  const deckRef = useRef<HTMLDivElement>(null);
+  const [slides, setSlides] = useState<{ id: string; label: string }[]>([]);
+  const [current, setCurrent] = useState(0);
+
+  const getSections = useCallback(
+    () =>
+      Array.from(deckRef.current?.querySelectorAll<HTMLElement>(".section") ?? []),
+    [],
+  );
+
+  const indexFromScroll = useCallback(() => {
+    const deck = deckRef.current;
+    if (!deck) return 0;
+    const sections = getSections();
+    const top = deck.scrollTop;
+    let best = 0;
+    let bestDist = Infinity;
+    sections.forEach((el, i) => {
+      const dist = Math.abs(el.offsetTop - top);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = i;
+      }
+    });
+    return best;
+  }, [getSections]);
+
+  const goTo = useCallback(
+    (i: number) => {
+      const deck = deckRef.current;
+      if (!deck) return;
+      const sections = getSections();
+      if (sections.length === 0) return;
+      const idx = Math.max(0, Math.min(sections.length - 1, i));
+      deck.scrollTo({ top: sections[idx].offsetTop, behavior: "smooth" });
+      setCurrent(idx);
+    },
+    [getSections],
+  );
+
+  const go = useCallback(
+    (dir: number) => goTo(indexFromScroll() + dir),
+    [goTo, indexFromScroll],
+  );
+
+  // Build the slide list (and labels for the dots) from the rendered sections.
+  useEffect(() => {
+    const sections = getSections();
+    setSlides(
+      sections.map((el) => ({
+        id: el.id,
+        label:
+          el.querySelector(".eyebrow")?.textContent?.trim() ||
+          el.querySelector(".t-h2")?.textContent?.trim() ||
+          el.id,
+      })),
+    );
+    setCurrent(indexFromScroll());
+  }, [getSections, indexFromScroll, dataset]);
+
+  // Keep the active slide in sync as the deck scrolls.
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setCurrent(indexFromScroll()));
+    };
+    deck.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      deck.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, [indexFromScroll]);
+
+  // ← / → (and PageUp/PageDown/Home/End) move between slides. Up/Down are left
+  // alone for natural scrolling, and key events over form fields are ignored.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      const tag = (document.activeElement?.tagName ?? "").toLowerCase();
+      if (tag === "input" || tag === "select" || tag === "textarea") return;
+      switch (e.key) {
+        case "ArrowRight":
+        case "PageDown":
+          e.preventDefault();
+          go(1);
+          break;
+        case "ArrowLeft":
+        case "PageUp":
+          e.preventDefault();
+          go(-1);
+          break;
+        case "Home":
+          e.preventDefault();
+          goTo(0);
+          break;
+        case "End":
+          e.preventDefault();
+          goTo(getSections().length - 1);
+          break;
+        default:
+          break;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go, goTo, getSections]);
+
+  // Selecting a merge (chart point or feed row) jumps to the attribution slide.
+  useEffect(() => {
+    if (!selectedSha) return;
+    const el = document.getElementById("zone-drill");
+    const deck = deckRef.current;
+    if (el && deck) {
+      requestAnimationFrame(() =>
+        deck.scrollTo({ top: el.offsetTop, behavior: "smooth" }),
+      );
+    }
+  }, [selectedSha]);
+
   return (
-    <div className="app">
-      <div className="chrome-top">
-        <span>Devin · Coverage patrol</span>
-        <span>
-          {REPO_OWNER}/{REPO_NAME}
+    <div className="app" ref={deckRef}>
+      <div className="deck-head">
+        <span className="deck-head__brand">
+          Devin · coverage · {REPO_OWNER}/{REPO_NAME}
         </span>
-      </div>
-      <div className="chrome-rule" />
-
-      <header className="title-block">
-        <p className="eyebrow">Devin coverage dashboard</p>
-        <h1 className="t-display">
-          Tracking test coverage against the compliance bar, one merge at a time
-        </h1>
-        <p className="lede">
-          Devin runs a continuous coverage patrol on{" "}
-          <span className="mono">
-            {REPO_OWNER}/{REPO_NAME}
-          </span>
-          . Every merged PR is measured, attributed, and tracked against the{" "}
-          <span className="num">{COVERAGE_TARGET_PCT}%</span> compliance-critical
-          bar due {fmtDateFull(EXAM_DATE)}.
-        </p>
-      </header>
-
-      <div className="controls" style={{ marginBottom: "var(--s-6)" }}>
-        <div className="row">
-          <span className="field-label">Metric</span>
+        <div className="deck-head__tools">
           <SegToggle
             ariaLabel="Coverage metric"
             options={[
@@ -222,53 +316,75 @@ function Dashboard({
             value={metric}
             onChange={setMetric}
           />
+          <span className="status-banner">
+            {source === "live" ? "Live" : "Bundled"} ·{" "}
+            {latest ? fmtDateFull(latest.timestamp) : "—"}
+          </span>
+          <Button
+            onClick={refresh}
+            disabled={refreshing}
+            title="Re-fetch from the coverage-data branch"
+          >
+            {refreshing ? "Refreshing…" : "Refresh live"}
+          </Button>
         </div>
-        <div className="spacer" />
-        <span className="status-banner">
-          {source === "live" ? "Live data" : "Bundled snapshot"} · as of{" "}
-          {latest ? fmtDateFull(latest.timestamp) : "—"}
-        </span>
-        <Button onClick={refresh} disabled={refreshing} title="Re-fetch from the coverage-data branch">
-          {refreshing ? "Refreshing…" : "Refresh live"}
-        </Button>
       </div>
 
-      <div className="grid grid--4">
-        <div className="card">
-          <Stat
-            label="Compliance-critical coverage"
-            value={fmtPct(compliancePct)}
-            tone={meetsBar ? "pos" : undefined}
-            sub={
-              meetsBar ? (
-                <Badge tone="good">meets {COVERAGE_TARGET_PCT}% bar</Badge>
-              ) : (
-                <Badge tone="signal">
-                  {fmtPct(COVERAGE_TARGET_PCT - compliancePct)} to bar
-                </Badge>
-              )
-            }
-          />
+      <section className="section" id="zone-overview">
+        <header className="title-block">
+          <p className="eyebrow">Coverage dashboard</p>
+          <h1 className="t-display">Compliance-critical test coverage</h1>
+          <p className="lede">
+            Coverage measured per merge on{" "}
+            <span className="mono">
+              {REPO_OWNER}/{REPO_NAME}
+            </span>
+            . Target <span className="num">{COVERAGE_TARGET_PCT}%</span> by{" "}
+            {fmtDateFull(EXAM_DATE)}.
+          </p>
+        </header>
+
+        <div className="grid grid--4">
+          <div className="card">
+            <Stat
+              label="Compliance-critical coverage"
+              value={fmtPct(compliancePct)}
+              tone={meetsBar ? "pos" : undefined}
+              sub={
+                meetsBar ? (
+                  <Badge tone="good">meets {COVERAGE_TARGET_PCT}% bar</Badge>
+                ) : (
+                  <Badge tone="signal">
+                    {fmtPct(COVERAGE_TARGET_PCT - compliancePct)} to bar
+                  </Badge>
+                )
+              }
+            />
+          </div>
+          <div className="card">
+            <Stat
+              label="Overall coverage"
+              value={fmtPct(overallPct)}
+              sub="all measured files"
+            />
+          </div>
+          <div className="card">
+            <Stat
+              label="Lines covered"
+              value={latest ? fmtInt(latest.totals.lines_covered) : "—"}
+              sub={latest ? `of ${fmtInt(latest.totals.lines_total)} measured` : ""}
+            />
+          </div>
+          <div className="card">
+            <Stat
+              label="Days to exam"
+              value={fmtInt(daysToExam)}
+              unit="d"
+              sub={fmtDateFull(EXAM_DATE)}
+            />
+          </div>
         </div>
-        <div className="card">
-          <Stat label="Overall coverage" value={fmtPct(overallPct)} sub="all measured files" />
-        </div>
-        <div className="card">
-          <Stat
-            label="Lines covered"
-            value={latest ? fmtInt(latest.totals.lines_covered) : "—"}
-            sub={latest ? `of ${fmtInt(latest.totals.lines_total)} measured` : ""}
-          />
-        </div>
-        <div className="card">
-          <Stat
-            label="Days to exam"
-            value={fmtInt(daysToExam)}
-            unit="d"
-            sub={fmtDateFull(EXAM_DATE)}
-          />
-        </div>
-      </div>
+      </section>
 
       <Zone1Hero
         snapshots={snapshots}
@@ -279,16 +395,14 @@ function Dashboard({
         selectedSha={selectedSha}
       />
 
-      <div ref={drillRef}>
-        <Zone2DrillDown
-          snapshots={snapshots}
-          pulls={pulls}
-          config={categories}
-          selectedSha={selectedSha}
-          metric={metric}
-          onClear={clearSelection}
-        />
-      </div>
+      <Zone2DrillDown
+        snapshots={snapshots}
+        pulls={pulls}
+        config={categories}
+        selectedSha={selectedSha}
+        metric={metric}
+        onClear={clearSelection}
+      />
 
       <Zone3Aggregate pulls={pulls} />
 
@@ -306,13 +420,42 @@ function Dashboard({
         palette={palette}
       />
 
-      <footer
-        className="chrome-top"
-        style={{ marginTop: "var(--s-9)", borderTop: "1px solid var(--rule-soft)", paddingTop: "var(--s-4)" }}
-      >
-        <span>Generated by Devin · no always-on backend</span>
-        <span>Data: git branch coverage-data</span>
-      </footer>
+      <nav className="deck-nav" aria-label="Slides">
+        <button
+          type="button"
+          className="deck-nav__arrow"
+          onClick={() => go(-1)}
+          disabled={current <= 0}
+          aria-label="Previous slide"
+        >
+          ←
+        </button>
+        <div className="deck-nav__dots">
+          {slides.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              className="deck-nav__dot"
+              aria-current={i === current}
+              aria-label={s.label}
+              title={s.label}
+              onClick={() => goTo(i)}
+            />
+          ))}
+        </div>
+        <span className="deck-nav__counter num">
+          {slides.length ? current + 1 : 0} / {slides.length}
+        </span>
+        <button
+          type="button"
+          className="deck-nav__arrow"
+          onClick={() => go(1)}
+          disabled={current >= slides.length - 1}
+          aria-label="Next slide"
+        >
+          →
+        </button>
+      </nav>
     </div>
   );
 }

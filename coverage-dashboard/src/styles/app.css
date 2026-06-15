@@ -28,6 +28,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body.ds-base {
@@ -37,6 +38,7 @@ body.ds-base {
   font-feature-settings: "ss01", "ss02", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 a {
@@ -48,10 +50,24 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ===== Layout ===== */
+/* ===== Layout: slide deck ===== */
+/* The dashboard is presented as a deck: each .section is a full-viewport
+   slide, the .app is the scroll container, and ← / → move between slides.
+   Proximity snap (not mandatory) so over-tall slides never trap the scroll. */
 .app {
-  max-width: 1180px;
-  margin: 0 auto;
+  --deck-head-h: 52px;
+  --deck-nav-h: 56px;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+.app--plain {
+  height: auto;
+  overflow: visible;
+  scroll-snap-type: none;
   padding: var(--s-7) var(--slide-pad-x) var(--s-9);
 }
 
@@ -97,7 +113,19 @@ a:hover {
 }
 
 .section {
-  margin-top: var(--s-9);
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--slide-pad) var(--slide-pad-x);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+}
+.section > * {
+  width: 100%;
+  max-width: var(--slide-w);
 }
 .section__head {
   margin-bottom: var(--s-6);
@@ -380,7 +408,7 @@ a:hover {
 /* ===== Chart ===== */
 .chart-wrap {
   width: 100%;
-  height: 360px;
+  height: clamp(220px, 42vh, 360px);
 }
 .chart-tooltip {
   background: var(--paper-0);
@@ -470,4 +498,111 @@ select.input {
   border: 1px solid var(--rule-soft);
   border-radius: var(--r-2);
   padding: var(--s-2) var(--s-3);
+}
+
+/* ===== Deck chrome (persistent header + bottom nav) ===== */
+.deck-head {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding: var(--s-3) var(--slide-pad-x);
+  background: var(--paper-0);
+  border-bottom: 1px solid var(--rule-faint);
+}
+.deck-head__brand {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  font-weight: var(--w-medium);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.deck-head__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.deck-nav {
+  position: fixed;
+  bottom: var(--s-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-4);
+  background: var(--paper-0);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-3);
+  box-shadow: var(--shadow-2);
+}
+.deck-nav__arrow {
+  font-family: var(--font-mono);
+  font-size: var(--t-body);
+  line-height: 1;
+  color: var(--ink-1);
+  background: transparent;
+  border: 0;
+  padding: var(--s-1) var(--s-2);
+  cursor: pointer;
+}
+.deck-nav__arrow:hover:not(:disabled) {
+  color: var(--accent-0);
+}
+.deck-nav__arrow:disabled {
+  color: var(--ink-4);
+  cursor: default;
+}
+.deck-nav__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.deck-nav__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid var(--ink-4);
+  background: transparent;
+  border-radius: var(--r-1);
+  cursor: pointer;
+}
+.deck-nav__dot:hover {
+  border-color: var(--accent-0);
+}
+.deck-nav__dot[aria-current="true"] {
+  background: var(--accent-0);
+  border-color: var(--accent-0);
+}
+.deck-nav__counter {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* Long tables stay within a slide instead of overflowing the viewport. */
+.app .card--flush {
+  max-height: 62vh;
+  overflow: auto;
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: var(--s-8) var(--s-5);
+  }
+  .deck-head {
+    padding-left: var(--s-5);
+    padding-right: var(--s-5);
+  }
 }

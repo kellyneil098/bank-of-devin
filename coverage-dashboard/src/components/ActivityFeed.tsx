@@ -97,9 +97,9 @@ export function ActivityFeed({
 
   return (
     <section className="section" id="zone-feed">
-      <SectionHead eyebrow="Activity" title="Every PR the patrol has shipped">
-        Filter by compliance category, service, language, or status. Click a
-        merged PR to jump to its attribution.
+      <SectionHead eyebrow="Activity" title="Pull requests">
+        Filter by category, service, language, status. Click a merged PR for
+        attribution.
       </SectionHead>
 
       <div className="controls" style={{ marginBottom: "var(--s-5)" }}>

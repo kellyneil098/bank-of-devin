@@ -74,13 +74,8 @@ export function Zone2DrillDown({
   if (!snapshot || !attribution) {
     return (
       <section className="section" id="zone-drill">
-        <SectionHead
-          eyebrow="Attribution"
-          title="Pick a merge to see exact attribution"
-        >
-          Select any merge point in the chart above. This panel breaks down the
-          coverage delta file-by-file and links to the PR and the Devin session
-          that produced it.
+        <SectionHead eyebrow="Attribution" title="Select a merge">
+          Per-file coverage delta for a merge, with PR and session links.
         </SectionHead>
         <Card>
           <p className="t-body muted">No merge selected.</p>

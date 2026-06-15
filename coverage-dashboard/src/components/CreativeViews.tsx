@@ -82,11 +82,10 @@ export function CreativeViews({
       <section className="section" id="zone-burndown">
         <SectionHead
           eyebrow="Coverage debt"
-          title="Uncovered compliance-critical lines over time"
+          title="Uncovered compliance-critical lines"
           signal
         >
-          The risk that matters before the exam: lines in compliance-critical
-          code with no test covering them. Lower is safer.
+          Compliance-critical lines with no covering test. Lower is safer.
         </SectionHead>
         <Card>
           <div className="chart-wrap" style={{ height: "280px" }}>
@@ -144,16 +143,16 @@ export function CreativeViews({
               <>
                 ■ Burned down{" "}
                 <span className="num delta-pos">{fmtInt(burnedDown)}</span>{" "}
-                uncovered lines since the first measured merge
+                uncovered lines since first merge
               </>
             ) : (
               <>
                 ■ Added{" "}
                 <span className="num delta-neg">{fmtInt(-burnedDown)}</span>{" "}
-                uncovered lines since the first measured merge
+                uncovered lines since first merge
               </>
             )}{" "}
-            · <span className="num">{fmtInt(nowRemaining)}</span> still at risk.
+            · <span className="num">{fmtInt(nowRemaining)}</span> still uncovered.
           </p>
         </Card>
       </section>
@@ -161,11 +160,10 @@ export function CreativeViews({
       <section className="section" id="zone-failures">
         <SectionHead
           eyebrow="Risk & rework"
-          title="Where the patrol needed a human"
+          title="Rework & review risk"
           signal
         >
-          Honest signal for the pitch: PRs that drew changes-requested reviews or
-          required human commits to land.
+          PRs with changes-requested reviews or human commits.
         </SectionHead>
         <div className="card card--flush">
           <table className="table">
@@ -223,12 +221,8 @@ export function CreativeViews({
 
       {mutated.length > 0 ? (
         <section className="section" id="zone-mutation">
-          <SectionHead
-            eyebrow="Mutation testing"
-            title="Test strength, where measured"
-          >
-            Mutation score is shown only for PRs that recorded one — coverage
-            says lines ran, mutation says the tests would catch a regression.
+          <SectionHead eyebrow="Mutation testing" title="Mutation score">
+            Shown only for PRs that recorded a score.
           </SectionHead>
           <div className="grid grid--3">
             {mutated.map((p) => (

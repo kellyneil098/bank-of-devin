@@ -158,12 +158,8 @@ export function Zone1Hero({
 
   return (
     <section className="section" id="zone-hero">
-      <SectionHead
-        eyebrow="Coverage over time"
-        title="Measured coverage over time"
-      >
-        Each point is a measured snapshot. Click any point to see exactly which
-        merge moved the line and by how much.
+      <SectionHead eyebrow="Trend" title="Coverage over time">
+        Each point is a measured merge. Click a point for its attribution.
       </SectionHead>
 
       <div className="controls" style={{ marginBottom: "var(--s-5)" }}>
@@ -340,14 +336,12 @@ export function Zone1Hero({
           <ProjectionReadout projection={projection} />
         ) : showProjection ? (
           <p className="t-small muted" style={{ marginTop: "var(--s-3)" }}>
-            ■ A projection needs measured snapshots from at least two distinct
-            days. Every measured merge so far lands on a single day, so no
-            trajectory is fit.
+            ■ Projection needs ≥2 distinct days; all merges landed on one.
           </p>
         ) : null}
         {selectedSha ? null : (
           <p className="t-small muted" style={{ marginTop: "var(--s-3)" }}>
-            ■ Tip: click a merge point to open its attribution below.
+            ■ Click a point for its attribution.
           </p>
         )}
       </div>
@@ -368,8 +362,7 @@ function ProjectionReadout({
   return (
     <div className="legend">
       <span className="t-small muted">
-        Compliance-critical trajectory:{" "}
-        <span className="num">{fmtSignedPts(ratePerDay)}</span> / day.
+        Trajectory: <span className="num">{fmtSignedPts(ratePerDay)}</span>/day
       </span>
       <span className="t-small muted">
         Projected at exam:{" "}
@@ -386,7 +379,7 @@ function ProjectionReadout({
             reaches {projection.targetPct}% by {fmtDateFull(eta)}
           </span>
         ) : (
-          <span className="delta-neg">Not on track to reach target</span>
+          <span className="delta-neg">Not on track</span>
         )}
       </span>
     </div>

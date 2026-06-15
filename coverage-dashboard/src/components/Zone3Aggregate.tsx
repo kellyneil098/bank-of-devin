@@ -48,11 +48,8 @@ export function Zone3Aggregate({ pulls }: { pulls: Pull[] }) {
 
   return (
     <section className="section" id="zone-aggregate">
-      <SectionHead
-        eyebrow="Program health"
-        title="The coverage patrol at a glance"
-      >
-        Aggregate outcomes across every PR the patrol has opened in this window.
+      <SectionHead eyebrow="Program health" title="Aggregate outcomes">
+        All PRs opened in this window.
       </SectionHead>
 
       <div className="grid grid--4">
