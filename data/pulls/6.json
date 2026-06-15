@@ -1,25 +1,31 @@
 {
   "number": 6,
-  "title": "Remove python accounts tests",
+  "title": "Remove unit tests from Python Accounts services (contacts + userservice)",
   "branch": "devin/1781142004-remove-python-accounts-tests",
-  "created_at": "2026-06-02T09:10:00Z",
-  "merged_at": null,
-  "merge_commit_sha": null,
+  "created_at": "2026-06-11T01:42:46Z",
+  "merged_at": "2026-06-14T20:32:37Z",
+  "merge_commit_sha": "be669583518a0aa3367ef4374dafc7f2a5c85be6",
   "author": "devin-ai-integration[bot]",
   "additions": 0,
-  "deletions": 120,
-  "files_changed": [],
+  "deletions": 391,
+  "files_changed": [
+    "src/accounts/contacts/tests/test_contacts.py",
+    "src/accounts/contacts/tests/test_db.py",
+    "src/accounts/userservice/tests/test_db.py",
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
   "tests_added_estimate": 0,
-  "session_url": null,
+  "session_url": "https://app.devin.ai/sessions/ea0bd66a3d32430b92ab66c1443a2dbe",
   "reviews": [
     {
-      "author": "kellyneil098",
-      "state": "CHANGES_REQUESTED",
-      "is_devin_review": false,
-      "submitted_at": null
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-11T01:45:49Z",
+      "body": "**Devin Review** found 7 potential issues.\n\nView 2 additional findings in Devin Review.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/6\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
     }
   ],
-  "review_verdict": "changes_requested",
-  "human_rework": false,
+  "review_verdict": "commented",
+  "human_rework": true,
   "mutation_score": null
 }
