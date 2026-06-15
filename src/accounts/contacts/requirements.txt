@@ -26,8 +26,6 @@ click==8.3.1
     # via
     #   -r requirements.in
     #   flask
-coverage[toml]==7.13.1
-    # via pytest-cov
 cryptography==46.0.3
     # via -r requirements.in
 flask==3.1.2
@@ -74,8 +72,6 @@ importlib-metadata==6.11.0
     # via
     #   -r requirements.in
     #   opentelemetry-api
-iniconfig==2.3.0
-    # via pytest
 itsdangerous==2.2.0
     # via
     #   -r requirements.in
@@ -143,11 +139,8 @@ packaging==23.2
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-sqlalchemy
-    #   pytest
 pluggy==1.6.0
-    # via
-    #   -r requirements.in
-    #   pytest
+    # via -r requirements.in
 proto-plus==1.27.0
     # via
     #   google-api-core
@@ -181,12 +174,6 @@ pycryptodome==3.23.0
 pyjwt==2.10.1
     # via -r requirements.in
 pyparsing==3.3.1
-    # via -r requirements.in
-pytest==7.4.4
-    # via
-    #   -r requirements.in
-    #   pytest-cov
-pytest-cov==4.1.0
     # via -r requirements.in
 pytz==2023.4
     # via -r requirements.in
