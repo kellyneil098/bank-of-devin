@@ -337,27 +337,36 @@ export interface BurndownPoint {
 
 /**
  * Burndown of remaining uncovered compliance-critical lines over time
- * (spec §8.6). Uses the daily-rollup snapshots.
+ * (spec §8.6). "daily" rolls up to the last snapshot of each calendar day;
+ * "merge" keeps one point per snapshot (used when every merge lands on a
+ * single day, where a daily rollup would collapse to one point).
  */
 export function complianceBurndown(
   snapshots: Snapshot[],
   config: CategoryConfig,
+  mode: "daily" | "merge" = "daily",
 ): BurndownPoint[] {
   const ordered = [...snapshots].sort((a, b) =>
     a.timestamp.localeCompare(b.timestamp),
   );
+  const remainingFor = (s: Snapshot): number => {
+    const slice = aggregateByCategory(s.files, config).find(
+      (x) => x.id === COMPLIANCE_CRITICAL_ID,
+    )!;
+    return slice.counts.lines_total - slice.counts.lines_covered;
+  };
+  if (mode === "merge") {
+    return ordered.map((s) => ({
+      day: dayOf(s.timestamp),
+      timestamp: s.timestamp,
+      remaining: remainingFor(s),
+    }));
+  }
   const byDay = new Map<string, Snapshot>();
   for (const s of ordered) byDay.set(dayOf(s.timestamp), s); // last wins
   return [...byDay.keys()].sort().map((day) => {
     const s = byDay.get(day)!;
-    const slice = aggregateByCategory(s.files, config).find(
-      (x) => x.id === COMPLIANCE_CRITICAL_ID,
-    )!;
-    return {
-      day,
-      timestamp: s.timestamp,
-      remaining: slice.counts.lines_total - slice.counts.lines_covered,
-    };
+    return { day, timestamp: s.timestamp, remaining: remainingFor(s) };
   });
 }
 

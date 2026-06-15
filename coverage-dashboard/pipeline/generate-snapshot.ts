@@ -36,6 +36,9 @@ import {
  *   DATA_DIR           coverage-data/data dir to write into (required)
  *   TRIGGER            "merge" | "daily" (default: "merge")
  *   COMMIT_SHA         the snapshot commit (merge commit or default HEAD)
+ *   COMMIT_TIMESTAMP   optional ISO time for the snapshot; defaults to now.
+ *                      Used when backfilling a historical merge so the point
+ *                      carries the merge commit's real time, not the run time.
  *   PARENT_SHA         optional; defaults to the last manifest snapshot's sha
  *   PR_NUMBER          optional; required for merge attribution
  *   GITHUB_REPOSITORY  "owner/repo" (for enrichment)
@@ -74,7 +77,7 @@ async function main(): Promise<void> {
   const snapshot: Snapshot = {
     commit_sha: commitSha,
     parent_sha: parentSha,
-    timestamp: new Date().toISOString(),
+    timestamp: process.env.COMMIT_TIMESTAMP ?? new Date().toISOString(),
     trigger,
     pr_number: trigger === "merge" ? prNumber : null,
     totals,

@@ -21,6 +21,7 @@ import { emptyCounts } from "../src/lib/schema.ts";
 import { parseJacocoXml } from "./parse-jacoco.ts";
 import { parseCoveragePyJson } from "./parse-coverage-py.ts";
 import { parseC8Json } from "./parse-c8.ts";
+import { isTestPath } from "./normalize-path.ts";
 
 /** Directories never worth descending into when hunting for reports. */
 const SKIP_DIRS = new Set([
@@ -73,6 +74,8 @@ export function discoverCoverage(repoRoot: string): {
 
   const add = (records: FileCoverage[]) => {
     for (const r of records) {
+      // Coverage is measured against application source, not test code.
+      if (isTestPath(r.path)) continue;
       const existing = byPath.get(r.path);
       // If two tools report the same path, keep the richer record.
       if (!existing || r.lines_total > existing.lines_total) {

@@ -16,6 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  isTestPath,
   normalizeC8Path,
   normalizeJavaPath,
   normalizePythonPath,
@@ -72,6 +73,45 @@ describe("normalizePythonPath", () => {
         "src/frontend",
       ),
     ).toBe("src/frontend/frontend.py");
+  });
+});
+
+describe("isTestPath", () => {
+  it("flags Python test modules, fixtures, and tests/ dirs", () => {
+    expect(isTestPath("src/accounts/userservice/tests/test_users.py")).toBe(true);
+    expect(isTestPath("src/accounts/contacts/test_contacts.py")).toBe(true);
+    expect(isTestPath("src/accounts/userservice/tests/constants.py")).toBe(true);
+    expect(isTestPath("src/accounts/userservice/conftest.py")).toBe(true);
+    expect(isTestPath("src/accounts/contacts/db_test.py")).toBe(true);
+  });
+
+  it("flags Java test classes and src/test sources", () => {
+    expect(
+      isTestPath(
+        "src/ledger/ledgerwriter/src/test/java/anthos/LedgerWriterControllerTest.java",
+      ),
+    ).toBe(true);
+    expect(isTestPath("src/ledger/balancereader/.../BalanceReaderTests.java")).toBe(
+      true,
+    );
+  });
+
+  it("flags JS/TS test and spec files", () => {
+    expect(isTestPath("src/frontend/static/app.test.ts")).toBe(true);
+    expect(isTestPath("src/frontend/static/app.spec.tsx")).toBe(true);
+    expect(isTestPath("src/frontend/__tests__/util.ts")).toBe(true);
+  });
+
+  it("treats application source as non-test", () => {
+    expect(isTestPath("src/accounts/userservice/userservice.py")).toBe(false);
+    expect(isTestPath("src/accounts/contacts/db.py")).toBe(false);
+    expect(
+      isTestPath(
+        "src/ledger/balancereader/src/main/java/anthos/samples/bankofanthos/balancereader/BalanceReaderController.java",
+      ),
+    ).toBe(false);
+    // "latest/" must not be mistaken for a "test/" directory.
+    expect(isTestPath("src/latest/service.py")).toBe(false);
   });
 });
 

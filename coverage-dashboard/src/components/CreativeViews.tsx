@@ -42,9 +42,13 @@ export function CreativeViews({
   config: CategoryConfig;
   palette: Palette;
 }) {
+  const singleDay = useMemo(
+    () => new Set(snapshots.map((s) => s.timestamp.slice(0, 10))).size < 2,
+    [snapshots],
+  );
   const burndown = useMemo(
-    () => complianceBurndown(snapshots, config),
-    [snapshots, config],
+    () => complianceBurndown(snapshots, config, singleDay ? "merge" : "daily"),
+    [snapshots, config, singleDay],
   );
   const burndownData = burndown.map((b) => ({
     t: Date.parse(b.timestamp),
@@ -54,6 +58,7 @@ export function CreativeViews({
   const nowRemaining = burndown.length
     ? burndown[burndown.length - 1].remaining
     : 0;
+  const burnedDown = startRemaining - nowRemaining;
 
   const failures = useMemo(
     () =>
@@ -77,7 +82,7 @@ export function CreativeViews({
       <section className="section" id="zone-burndown">
         <SectionHead
           eyebrow="Coverage debt"
-          title="Uncovered compliance-critical lines are burning down"
+          title="Uncovered compliance-critical lines over time"
           signal
         >
           The risk that matters before the exam: lines in compliance-critical
@@ -135,12 +140,20 @@ export function CreativeViews({
             </ResponsiveContainer>
           </div>
           <p className="t-small muted" style={{ marginTop: "var(--s-3)" }}>
-            ■ Burned down{" "}
-            <span className="num delta-pos">
-              {fmtInt(startRemaining - nowRemaining)}
-            </span>{" "}
-            uncovered lines so far · <span className="num">{fmtInt(nowRemaining)}</span>{" "}
-            still at risk.
+            {burnedDown >= 0 ? (
+              <>
+                ■ Burned down{" "}
+                <span className="num delta-pos">{fmtInt(burnedDown)}</span>{" "}
+                uncovered lines since the first measured merge
+              </>
+            ) : (
+              <>
+                ■ Added{" "}
+                <span className="num delta-neg">{fmtInt(-burnedDown)}</span>{" "}
+                uncovered lines since the first measured merge
+              </>
+            )}{" "}
+            · <span className="num">{fmtInt(nowRemaining)}</span> still at risk.
           </p>
         </Card>
       </section>

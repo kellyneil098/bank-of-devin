@@ -104,6 +104,33 @@ export function normalizePythonPath(rawPath: string, serviceDir: string): string
 }
 
 /**
+ * Whether a repo-relative path is test code rather than application code.
+ *
+ * Coverage of an application is measured against its production source, not its
+ * tests. JaCoCo already scopes Java reports to main classes, but coverage.py run
+ * with `--cov=.` reports the test modules themselves (e.g. `tests/test_db.py`,
+ * `tests/constants.py`) as covered code, which inflates the numbers. We exclude
+ * test files uniformly across languages at discovery time so every snapshot
+ * reflects true application coverage.
+ */
+export function isTestPath(path: string): boolean {
+  const p = path.replace(/\\/g, "/");
+  const base = p.split("/").pop() ?? p;
+  // Anything living in a conventional test directory.
+  if (/(^|\/)(tests?|__tests__)\//.test(p)) return true;
+  if (/(^|\/)src\/test\//.test(p)) return true;
+  // Python test modules and pytest fixtures.
+  if (/^test_.*\.py$/.test(base)) return true;
+  if (/_test\.py$/.test(base)) return true;
+  if (base === "conftest.py") return true;
+  // JS/TS test and spec files.
+  if (/\.(test|spec)\.[cm]?[jt]sx?$/.test(base)) return true;
+  // Java test classes.
+  if (/Tests?\.java$/.test(base)) return true;
+  return false;
+}
+
+/**
  * Normalize a c8/Istanbul path (absolute filesystem path) to repo-relative.
  * Istanbul emits absolute paths; we strip everything up to and including the
  * provided absolute `repoRoot`.

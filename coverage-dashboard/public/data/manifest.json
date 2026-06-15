@@ -1,132 +1,40 @@
 {
-  "generated_at": "2026-06-14T21:20:04.622Z",
+  "generated_at": "2026-06-15T00:12:48.424Z",
   "snapshots": [
     {
-      "commit_sha": "ce8a6e4c23e974cd6fdbff6e27058bc18b64dd22",
-      "parent_sha": null,
-      "timestamp": "2026-06-01T23:50:00Z",
-      "trigger": "daily",
-      "pr_number": null,
-      "file": "data/snapshots/ce8a6e4c23e974cd6fdbff6e27058bc18b64dd22.json"
-    },
-    {
-      "commit_sha": "cf9663dab4e1a27a110c083e9761076c8f79fe76",
-      "parent_sha": "ce8a6e4c23e974cd6fdbff6e27058bc18b64dd22",
-      "timestamp": "2026-06-02T23:50:00Z",
-      "trigger": "daily",
-      "pr_number": null,
-      "file": "data/snapshots/cf9663dab4e1a27a110c083e9761076c8f79fe76.json"
-    },
-    {
-      "commit_sha": "2c4a81e050ba033c8f4e77b10461599cd33e162a",
-      "parent_sha": "cf9663dab4e1a27a110c083e9761076c8f79fe76",
-      "timestamp": "2026-06-03T14:00:00Z",
-      "trigger": "merge",
-      "pr_number": 1,
-      "file": "data/snapshots/2c4a81e050ba033c8f4e77b10461599cd33e162a.json"
-    },
-    {
-      "commit_sha": "f4cff8623638abe777d37bb7a09b3d102bf2096b",
-      "parent_sha": "2c4a81e050ba033c8f4e77b10461599cd33e162a",
-      "timestamp": "2026-06-04T15:00:00Z",
-      "trigger": "merge",
-      "pr_number": 2,
-      "file": "data/snapshots/f4cff8623638abe777d37bb7a09b3d102bf2096b.json"
-    },
-    {
-      "commit_sha": "8610a6ab28670796e83634a971fc3fc88232bc42",
-      "parent_sha": "f4cff8623638abe777d37bb7a09b3d102bf2096b",
-      "timestamp": "2026-06-05T23:50:00Z",
-      "trigger": "daily",
-      "pr_number": null,
-      "file": "data/snapshots/8610a6ab28670796e83634a971fc3fc88232bc42.json"
-    },
-    {
-      "commit_sha": "55cada515e28d953bfc63daa73830a2686c4dcfa",
-      "parent_sha": "8610a6ab28670796e83634a971fc3fc88232bc42",
-      "timestamp": "2026-06-06T16:00:00Z",
-      "trigger": "merge",
-      "pr_number": 8,
-      "file": "data/snapshots/55cada515e28d953bfc63daa73830a2686c4dcfa.json"
-    },
-    {
-      "commit_sha": "ec9c7de3888b9787bb01c618c78f2fae847d31dc",
-      "parent_sha": "55cada515e28d953bfc63daa73830a2686c4dcfa",
-      "timestamp": "2026-06-07T22:00:00Z",
-      "trigger": "merge",
-      "pr_number": 3,
-      "file": "data/snapshots/ec9c7de3888b9787bb01c618c78f2fae847d31dc.json"
-    },
-    {
-      "commit_sha": "46dfba929f8f6833ab63768fb0e1d8fc7adb476e",
-      "parent_sha": "ec9c7de3888b9787bb01c618c78f2fae847d31dc",
-      "timestamp": "2026-06-08T17:00:00Z",
-      "trigger": "merge",
-      "pr_number": 9,
-      "file": "data/snapshots/46dfba929f8f6833ab63768fb0e1d8fc7adb476e.json"
-    },
-    {
-      "commit_sha": "d115abf982d204ae8c69342f86b18d01895560bc",
-      "parent_sha": "46dfba929f8f6833ab63768fb0e1d8fc7adb476e",
-      "timestamp": "2026-06-09T23:50:00Z",
-      "trigger": "daily",
-      "pr_number": null,
-      "file": "data/snapshots/d115abf982d204ae8c69342f86b18d01895560bc.json"
-    },
-    {
-      "commit_sha": "ea11a4adf2b67c4d46d63836f09a6c9ed95263e5",
-      "parent_sha": "d115abf982d204ae8c69342f86b18d01895560bc",
-      "timestamp": "2026-06-10T13:00:00Z",
-      "trigger": "merge",
-      "pr_number": 10,
-      "file": "data/snapshots/ea11a4adf2b67c4d46d63836f09a6c9ed95263e5.json"
-    },
-    {
-      "commit_sha": "b49e944e73c14b3d4d4299c9bdc2a19e8d40ec9a",
-      "parent_sha": "ea11a4adf2b67c4d46d63836f09a6c9ed95263e5",
-      "timestamp": "2026-06-11T18:00:00Z",
-      "trigger": "merge",
-      "pr_number": 11,
-      "file": "data/snapshots/b49e944e73c14b3d4d4299c9bdc2a19e8d40ec9a.json"
-    },
-    {
-      "commit_sha": "f9013e4f861b0120316984c5c769f2d27990679d",
-      "parent_sha": "b49e944e73c14b3d4d4299c9bdc2a19e8d40ec9a",
-      "timestamp": "2026-06-12T16:00:00Z",
-      "trigger": "merge",
-      "pr_number": 12,
-      "file": "data/snapshots/f9013e4f861b0120316984c5c769f2d27990679d.json"
-    },
-    {
-      "commit_sha": "02cfd7f0b3c3c5d88387cb86a5fbcbb3f20fcee1",
-      "parent_sha": "f9013e4f861b0120316984c5c769f2d27990679d",
-      "timestamp": "2026-06-13T15:00:00Z",
-      "trigger": "merge",
-      "pr_number": 13,
-      "file": "data/snapshots/02cfd7f0b3c3c5d88387cb86a5fbcbb3f20fcee1.json"
-    },
-    {
-      "commit_sha": "a4dbfb89efdbb8d05d66036820ad3ac8c2d20144",
-      "parent_sha": "02cfd7f0b3c3c5d88387cb86a5fbcbb3f20fcee1",
-      "timestamp": "2026-06-14T20:00:00Z",
+      "commit_sha": "a3df2db9",
+      "parent_sha": "670a2ee5",
+      "timestamp": "2026-06-14T16:30:57-04:00",
       "trigger": "merge",
       "pr_number": 7,
-      "file": "data/snapshots/a4dbfb89efdbb8d05d66036820ad3ac8c2d20144.json"
+      "file": "data/snapshots/a3df2db9.json"
+    },
+    {
+      "commit_sha": "67f291aa",
+      "parent_sha": "a3df2db9",
+      "timestamp": "2026-06-14T16:31:39-04:00",
+      "trigger": "merge",
+      "pr_number": 4,
+      "file": "data/snapshots/67f291aa.json"
+    },
+    {
+      "commit_sha": "c141c187",
+      "parent_sha": "67f291aa",
+      "timestamp": "2026-06-14T16:32:08-04:00",
+      "trigger": "merge",
+      "pr_number": 5,
+      "file": "data/snapshots/c141c187.json"
+    },
+    {
+      "commit_sha": "be669583",
+      "parent_sha": "c141c187",
+      "timestamp": "2026-06-14T16:32:37-04:00",
+      "trigger": "merge",
+      "pr_number": 6,
+      "file": "data/snapshots/be669583.json"
     }
   ],
   "pulls": [
-    {
-      "number": 1,
-      "file": "data/pulls/1.json"
-    },
-    {
-      "number": 2,
-      "file": "data/pulls/2.json"
-    },
-    {
-      "number": 3,
-      "file": "data/pulls/3.json"
-    },
     {
       "number": 4,
       "file": "data/pulls/4.json"
@@ -142,30 +50,6 @@
     {
       "number": 7,
       "file": "data/pulls/7.json"
-    },
-    {
-      "number": 8,
-      "file": "data/pulls/8.json"
-    },
-    {
-      "number": 9,
-      "file": "data/pulls/9.json"
-    },
-    {
-      "number": 10,
-      "file": "data/pulls/10.json"
-    },
-    {
-      "number": 11,
-      "file": "data/pulls/11.json"
-    },
-    {
-      "number": 12,
-      "file": "data/pulls/12.json"
-    },
-    {
-      "number": 13,
-      "file": "data/pulls/13.json"
     }
   ]
 }

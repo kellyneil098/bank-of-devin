@@ -197,7 +197,7 @@ function Dashboard({
       <header className="title-block">
         <p className="eyebrow">Devin coverage dashboard</p>
         <h1 className="t-display">
-          Driving test coverage to the compliance bar, one merge at a time
+          Tracking test coverage against the compliance bar, one merge at a time
         </h1>
         <p className="lede">
           Devin runs a continuous coverage patrol on{" "}
