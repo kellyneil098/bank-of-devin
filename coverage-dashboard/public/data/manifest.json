@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-06-15T00:12:48.424Z",
+  "snapshots": [
+    {
+      "commit_sha": "a3df2db9",
+      "parent_sha": "670a2ee5",
+      "timestamp": "2026-06-14T16:30:57-04:00",
+      "trigger": "merge",
+      "pr_number": 7,
+      "file": "data/snapshots/a3df2db9.json"
+    },
+    {
+      "commit_sha": "67f291aa",
+      "parent_sha": "a3df2db9",
+      "timestamp": "2026-06-14T16:31:39-04:00",
+      "trigger": "merge",
+      "pr_number": 4,
+      "file": "data/snapshots/67f291aa.json"
+    },
+    {
+      "commit_sha": "c141c187",
+      "parent_sha": "67f291aa",
+      "timestamp": "2026-06-14T16:32:08-04:00",
+      "trigger": "merge",
+      "pr_number": 5,
+      "file": "data/snapshots/c141c187.json"
+    },
+    {
+      "commit_sha": "be669583",
+      "parent_sha": "c141c187",
+      "timestamp": "2026-06-14T16:32:37-04:00",
+      "trigger": "merge",
+      "pr_number": 6,
+      "file": "data/snapshots/be669583.json"
+    }
+  ],
+  "pulls": [
+    {
+      "number": 4,
+      "file": "data/pulls/4.json"
+    },
+    {
+      "number": 5,
+      "file": "data/pulls/5.json"
+    },
+    {
+      "number": 6,
+      "file": "data/pulls/6.json"
+    },
+    {
+      "number": 7,
+      "file": "data/pulls/7.json"
+    }
+  ]
+}
