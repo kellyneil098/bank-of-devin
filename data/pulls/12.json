@@ -1,0 +1,28 @@
+{
+  "number": 12,
+  "title": "test(userservice): login returns 404 for non-existent user",
+  "branch": "devin/1781588305-userservice-login-404",
+  "created_at": "2026-06-16T05:38:46Z",
+  "merged_at": "2026-06-16T06:26:03Z",
+  "merge_commit_sha": "bc9a32fd7bff5c9ffbaacbb9afef5681d394649b",
+  "author": "devin-ai-integration[bot]",
+  "additions": 13,
+  "deletions": 0,
+  "files_changed": [
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
+  "tests_added_estimate": 1,
+  "session_url": "https://app.devin.ai/sessions/9419a92ee1174a1cab24f3519e772629",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-16T05:40:41Z",
+      "body": "## ✅ Devin Review: No Issues Found\n\nDevin Review analyzed this PR and found no bugs or issues to report.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/12\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
