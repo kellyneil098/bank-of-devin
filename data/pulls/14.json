@@ -1,0 +1,28 @@
+{
+  "number": 14,
+  "title": "test(userservice): login returns 200 with valid JWT on success",
+  "branch": "devin/1781588250-userservice-login-test",
+  "created_at": "2026-06-16T05:39:03Z",
+  "merged_at": "2026-06-16T06:14:00Z",
+  "merge_commit_sha": "c15e718391503d2c82101cf08bec69097dc63137",
+  "author": "devin-ai-integration[bot]",
+  "additions": 37,
+  "deletions": 0,
+  "files_changed": [
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
+  "tests_added_estimate": 1,
+  "session_url": "https://app.devin.ai/sessions/73f7d1e2754f40baae33027a5a5796e7",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-16T05:40:56Z",
+      "body": "## ✅ Devin Review: No Issues Found\n\nDevin Review analyzed this PR and found no bugs or issues to report.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/14\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
