@@ -1,9 +1,14 @@
+import json
 import unittest
 from unittest.mock import patch, mock_open, MagicMock
+
+import bcrypt
+import jwt
 
 from userservice.userservice import create_app
 from tests.constants import (
     EXAMPLE_PUBLIC_KEY,
+    EXAMPLE_USER,
     EXAMPLE_USER_REQUEST,
     INVALID_USERNAMES,
     PRIVATE_KEY_PEM,
@@ -38,6 +43,38 @@ class TestUserservice(unittest.TestCase):
         """Verify readiness endpoint returns 200."""
         response = self.test_app.get("/ready")
         self.assertEqual(response.status_code, 200)
+
+    def test_login_200_valid_credentials(self):
+        """Successful login returns 200 with valid JWT containing expected claims."""
+        # mock get_user to return a valid user record
+        password = "correct"
+        passhash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        self.mocked_db.return_value.get_user.return_value = {
+            "accountid": "1234567890",
+            "username": EXAMPLE_USER,
+            "passhash": passhash,
+            "firstname": "Test",
+            "lastname": "User",
+        }
+        # send login request
+        response = self.test_app.get(
+            "/login",
+            query_string={"username": EXAMPLE_USER, "password": password},
+        )
+        # assert 200 response
+        self.assertEqual(response.status_code, 200)
+        # assert response body contains a token field
+        data = json.loads(response.data)
+        self.assertIn("token", data)
+        # decode the JWT and verify claims
+        decoded = jwt.decode(
+            data["token"], EXAMPLE_PUBLIC_KEY, algorithms=["RS256"]
+        )
+        self.assertEqual(decoded["user"], EXAMPLE_USER)
+        self.assertEqual(decoded["acct"], "1234567890")
+        self.assertEqual(decoded["name"], "Test User")
+        self.assertIn("iat", decoded)
+        self.assertIn("exp", decoded)
 
 
     def test_create_user_400_validation_rejects_invalid_input(self):
