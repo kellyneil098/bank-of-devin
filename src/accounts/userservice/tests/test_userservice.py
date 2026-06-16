@@ -2,7 +2,12 @@ import unittest
 from unittest.mock import patch, mock_open, MagicMock
 
 from userservice.userservice import create_app
-from tests.constants import EXAMPLE_PUBLIC_KEY, PRIVATE_KEY_PEM
+from tests.constants import (
+    EXAMPLE_PUBLIC_KEY,
+    EXAMPLE_USER_REQUEST,
+    INVALID_USERNAMES,
+    PRIVATE_KEY_PEM,
+)
 
 
 class TestUserservice(unittest.TestCase):
@@ -33,6 +38,40 @@ class TestUserservice(unittest.TestCase):
         """Verify readiness endpoint returns 200."""
         response = self.test_app.get("/ready")
         self.assertEqual(response.status_code, 200)
+
+
+    def test_create_user_400_validation_rejects_invalid_input(self):
+        """POST /users returns 400 for missing fields, empty fields, invalid username, and password mismatch."""
+        # missing required field
+        incomplete = {k: v for k, v in EXAMPLE_USER_REQUEST.items() if k != "username"}
+        response = self.test_app.post("/users", data=incomplete)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"missing required field(s)")
+
+        # empty field value
+        empty_field = EXAMPLE_USER_REQUEST.copy()
+        empty_field["username"] = ""
+        response = self.test_app.post("/users", data=empty_field)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"missing value for input field(s)")
+
+        # invalid usernames (special chars, too short, too long)
+        for invalid_username in INVALID_USERNAMES:
+            invalid = EXAMPLE_USER_REQUEST.copy()
+            invalid["username"] = invalid_username
+            response = self.test_app.post("/users", data=invalid)
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(
+                response.data,
+                b"username must contain 2-15 alphanumeric characters or underscores",
+            )
+
+        # password mismatch
+        mismatch = EXAMPLE_USER_REQUEST.copy()
+        mismatch["password-repeat"] = "wrong_password"
+        response = self.test_app.post("/users", data=mismatch)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"passwords do not match")
 
 
 if __name__ == "__main__":
