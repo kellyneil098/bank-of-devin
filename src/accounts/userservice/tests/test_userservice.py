@@ -76,6 +76,25 @@ class TestUserservice(unittest.TestCase):
         self.assertIn("iat", decoded)
         self.assertIn("exp", decoded)
 
+    def test_login_401_wrong_password(self):
+        """Login with wrong password returns 401 with 'invalid login'."""
+        # mock get_user to return a user whose passhash matches 'correctpassword'
+        correct_hash = bcrypt.hashpw(b"correctpassword", bcrypt.gensalt())
+        self.mocked_db.return_value.get_user.return_value = {
+            "accountid": "1234567890",
+            "username": EXAMPLE_USER,
+            "passhash": correct_hash,
+            "firstname": "Test",
+            "lastname": "User",
+        }
+        # send request with wrong password
+        response = self.test_app.get(
+            "/login",
+            query_string={"username": EXAMPLE_USER, "password": "wrongpassword"},
+        )
+        # assert 401 response code and error message
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data, b"invalid login")
 
     def test_create_user_400_validation_rejects_invalid_input(self):
         """POST /users returns 400 for missing fields, empty fields, invalid username, and password mismatch."""
