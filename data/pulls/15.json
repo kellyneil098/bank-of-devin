@@ -1,0 +1,29 @@
+{
+  "number": 15,
+  "title": "test(userservice): create_user validation rejects invalid input",
+  "branch": "devin/1781588238-userservice-validation-test",
+  "created_at": "2026-06-16T05:39:42Z",
+  "merged_at": "2026-06-16T05:55:39Z",
+  "merge_commit_sha": "b2665ea22c91082b8aa0971a69a5d894948bc295",
+  "author": "devin-ai-integration[bot]",
+  "additions": 47,
+  "deletions": 1,
+  "files_changed": [
+    "src/accounts/userservice/tests/constants.py",
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
+  "tests_added_estimate": 1,
+  "session_url": "https://app.devin.ai/sessions/2c4ed87347c9405bb6f08c18a4a4a58f",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-16T05:41:44Z",
+      "body": "**Devin Review** found 1 potential issue.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/15\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
