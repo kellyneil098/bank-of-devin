@@ -37,3 +37,10 @@ EXAMPLE_USER_REQUEST = {
     "zip": "90210",
     "ssn": "123-45-6789",
 }
+
+INVALID_USERNAMES = [
+    "a",                  # too short (1 char)
+    "a" * 16,             # too long (16 chars)
+    "test@user",          # special character
+    "test user",          # space
+]
