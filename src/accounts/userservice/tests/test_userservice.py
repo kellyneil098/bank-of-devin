@@ -110,6 +110,19 @@ class TestUserservice(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"passwords do not match")
 
+    def test_login_404_non_existent_user(self):
+        """Login with a non-existent username returns 404."""
+        # mock get_user to return None (user not found)
+        self.mocked_db.return_value.get_user.return_value = None
+        # send login request
+        response = self.test_app.get(
+            "/login?username=unknown&password=pass"
+        )
+        # assert 404 response code
+        self.assertEqual(response.status_code, 404)
+        # assert correct error message
+        self.assertEqual(response.data, b"user unknown does not exist")
+
 
 if __name__ == "__main__":
     unittest.main()
