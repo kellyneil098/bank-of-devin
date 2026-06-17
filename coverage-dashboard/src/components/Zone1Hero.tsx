@@ -304,13 +304,13 @@ export function Zone1Hero({
                   return (
                     <Line
                       key={s.id}
-                      type="monotone"
+                      type="linear"
                       dataKey={s.id}
                       stroke={style.stroke}
                       strokeWidth={style.strokeWidth}
                       strokeDasharray={style.strokeDasharray}
-                      dot={false}
-                      activeDot={{ r: 4 }}
+                      dot={{ r: 3, fill: style.stroke, strokeWidth: 0 }}
+                      activeDot={{ r: 5 }}
                       connectNulls
                       isAnimationActive={false}
                     />
