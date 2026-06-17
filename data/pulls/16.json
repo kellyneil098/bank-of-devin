@@ -1,0 +1,28 @@
+{
+  "number": 16,
+  "title": "test(userservice): add 5 auth unit tests for login and create_user",
+  "branch": "devin/1781674070-userservice-auth-tests",
+  "created_at": "2026-06-17T05:30:11Z",
+  "merged_at": "2026-06-17T05:50:48Z",
+  "merge_commit_sha": "d5fb738b47fbceba970e21897197b793d2763e55",
+  "author": "devin-ai-integration[bot]",
+  "additions": 100,
+  "deletions": 2,
+  "files_changed": [
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
+  "tests_added_estimate": 5,
+  "session_url": "https://app.devin.ai/sessions/1b1ee61088bb41d494eb9bb91df0f2ea",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-17T05:32:07Z",
+      "body": "## ✅ Devin Review: No Issues Found\n\nDevin Review analyzed this PR and found no bugs or issues to report.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/16\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
