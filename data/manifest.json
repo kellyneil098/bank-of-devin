@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-18T21:09:54.764Z",
+  "generated_at": "2026-06-18T21:30:00.000Z",
   "snapshots": [
     {
       "commit_sha": "a3df2db9",
@@ -42,40 +42,8 @@
       "file": "data/snapshots/f00b6f4490936d709f831c986fe6d951b82e4b26.json"
     },
     {
-      "commit_sha": "b2665ea22c91082b8aa0971a69a5d894948bc295",
-      "parent_sha": "3dc2194200f9ec137c974ea0b53f6e335a33482e",
-      "timestamp": "2026-06-16T05:58:29.541Z",
-      "trigger": "merge",
-      "pr_number": 15,
-      "file": "data/snapshots/b2665ea22c91082b8aa0971a69a5d894948bc295.json"
-    },
-    {
-      "commit_sha": "c15e718391503d2c82101cf08bec69097dc63137",
-      "parent_sha": "b2665ea22c91082b8aa0971a69a5d894948bc295",
-      "timestamp": "2026-06-16T06:15:46.873Z",
-      "trigger": "merge",
-      "pr_number": 14,
-      "file": "data/snapshots/c15e718391503d2c82101cf08bec69097dc63137.json"
-    },
-    {
-      "commit_sha": "bc9a32fd7bff5c9ffbaacbb9afef5681d394649b",
-      "parent_sha": "c15e718391503d2c82101cf08bec69097dc63137",
-      "timestamp": "2026-06-16T06:27:42.127Z",
-      "trigger": "merge",
-      "pr_number": 12,
-      "file": "data/snapshots/bc9a32fd7bff5c9ffbaacbb9afef5681d394649b.json"
-    },
-    {
-      "commit_sha": "dd49c9a26eb2e1d58a87b7fe2e7b627829da999d",
-      "parent_sha": "bc9a32fd7bff5c9ffbaacbb9afef5681d394649b",
-      "timestamp": "2026-06-16T06:29:30.413Z",
-      "trigger": "merge",
-      "pr_number": 13,
-      "file": "data/snapshots/dd49c9a26eb2e1d58a87b7fe2e7b627829da999d.json"
-    },
-    {
       "commit_sha": "3dc2194200f9ec137c974ea0b53f6e335a33482e",
-      "parent_sha": "dd49c9a26eb2e1d58a87b7fe2e7b627829da999d",
+      "parent_sha": "f00b6f4490936d709f831c986fe6d951b82e4b26",
       "timestamp": "2026-06-16T11:35:52.741Z",
       "trigger": "daily",
       "pr_number": null,
@@ -138,22 +106,6 @@
     {
       "number": 11,
       "file": "data/pulls/11.json"
-    },
-    {
-      "number": 12,
-      "file": "data/pulls/12.json"
-    },
-    {
-      "number": 13,
-      "file": "data/pulls/13.json"
-    },
-    {
-      "number": 14,
-      "file": "data/pulls/14.json"
-    },
-    {
-      "number": 15,
-      "file": "data/pulls/15.json"
     },
     {
       "number": 16,
