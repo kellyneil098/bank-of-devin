@@ -27,6 +27,7 @@ name: coverage-pipeline
 on:
   pull_request:
     types: [closed]
+    branches: [main]
   schedule:
     - cron: "17 6 * * *"
   workflow_dispatch:
