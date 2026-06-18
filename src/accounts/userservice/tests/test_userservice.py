@@ -5,6 +5,7 @@ from unittest.mock import patch, mock_open
 
 import bcrypt
 import jwt
+from sqlalchemy.exc import SQLAlchemyError
 
 from userservice.userservice import create_app
 from tests.constants import (
@@ -131,6 +132,68 @@ class TestUserservice(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
         self.assertIn("already exists", response.get_data(as_text=True))
         self.db.add_user.assert_not_called()
+
+
+    def test_create_user_returns_400_for_missing_fields(self):
+        """Validation logic: a request missing required fields is rejected with 400."""
+        incomplete_req = {
+            "username": "newuser",
+            "password": "pass123",
+        }
+
+        response = self.test_app.post("/users", data=incomplete_req)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("missing required field", response.get_data(as_text=True))
+        self.db.add_user.assert_not_called()
+
+    def test_create_user_returns_400_for_invalid_username(self):
+        """Validation logic: a username with invalid characters is rejected with 400."""
+        req = dict(EXAMPLE_USER_REQUEST)
+        req["username"] = "ab!@#bad"
+
+        response = self.test_app.post("/users", data=req)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("alphanumeric", response.get_data(as_text=True))
+        self.db.add_user.assert_not_called()
+
+    def test_create_user_returns_201_on_success(self):
+        """Happy path: valid new-user request creates account and returns 201."""
+        self.db.get_user.return_value = None
+        self.db.generate_accountid.return_value = "9999999999"
+
+        response = self.test_app.post("/users", data=dict(EXAMPLE_USER_REQUEST))
+
+        self.assertEqual(response.status_code, 201)
+        self.db.add_user.assert_called_once()
+        saved = self.db.add_user.call_args[0][0]
+        self.assertEqual(saved["accountid"], "9999999999")
+        self.assertEqual(saved["username"], "testuser")
+        self.assertTrue(bcrypt.checkpw(b"password123", saved["passhash"]))
+
+    def test_login_returns_500_on_db_error(self):
+        """Downstream failure: a database error during login returns 500."""
+        self.db.get_user.side_effect = SQLAlchemyError("connection lost")
+
+        response = self.test_app.get(
+            "/login",
+            query_string={"username": "testuser", "password": "any"},
+        )
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("failed to retrieve user information", response.get_data(as_text=True))
+
+    def test_create_user_returns_500_on_db_error(self):
+        """Downstream failure: a database error during user creation returns 500."""
+        self.db.get_user.return_value = None
+        self.db.generate_accountid.return_value = "9999999999"
+        self.db.add_user.side_effect = SQLAlchemyError("insert failed")
+
+        response = self.test_app.post("/users", data=dict(EXAMPLE_USER_REQUEST))
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("failed to create user", response.get_data(as_text=True))
 
 
 if __name__ == "__main__":
