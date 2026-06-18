@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T11:18:28.467Z",
+  "generated_at": "2026-06-18T05:22:14.719Z",
   "snapshots": [
     {
       "commit_sha": "a3df2db9",
@@ -96,6 +96,14 @@
       "trigger": "daily",
       "pr_number": null,
       "file": "data/snapshots/dd92ddd2fa63d52ddc2ba9ffdd8fd2d269bf61e4.json"
+    },
+    {
+      "commit_sha": "614c1112f693afa401dd288b94b0b02f20ce9391",
+      "parent_sha": "dd92ddd2fa63d52ddc2ba9ffdd8fd2d269bf61e4",
+      "timestamp": "2026-06-18T05:22:13.487Z",
+      "trigger": "merge",
+      "pr_number": 20,
+      "file": "data/snapshots/614c1112f693afa401dd288b94b0b02f20ce9391.json"
     }
   ],
   "pulls": [
@@ -146,6 +154,10 @@
     {
       "number": 18,
       "file": "data/pulls/18.json"
+    },
+    {
+      "number": 20,
+      "file": "data/pulls/20.json"
     }
   ]
 }
