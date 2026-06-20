@@ -117,8 +117,9 @@ export function buildTimeSeries(
 
   let points: TimePoint[];
   if (mode === "merge") {
-    points = ordered.map((s) =>
-      makePoint(s, s.pr_number !== null ? [s.pr_number] : []),
+    const mergeOnly = ordered.filter((s) => s.pr_number !== null);
+    points = mergeOnly.map((s) =>
+      makePoint(s, [s.pr_number as number]),
     );
   } else {
     const byDay = new Map<string, Snapshot[]>();
