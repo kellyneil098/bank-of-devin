@@ -33,13 +33,12 @@ import {
   type Metric,
   type TimePoint,
   buildTimeSeries,
-  projectCompliance,
 } from "../lib/derive.ts";
 import { labelForCategory } from "../lib/categories.ts";
 import { type Palette, seriesStyle } from "../lib/theme.ts";
 import { fmtDate, fmtDateFull, fmtPct, fmtSignedPts } from "../lib/format.ts";
 import { SectionHead, SegToggle } from "./primitives.tsx";
-import { COVERAGE_TARGET_PCT, EXAM_DATE } from "../config.ts";
+import { COVERAGE_TARGET_PCT } from "../config.ts";
 
 interface SeriesMeta {
   id: string;
@@ -55,21 +54,18 @@ export function Zone1Hero({
   palette,
   metric,
   onSelectPoint,
-  selectedSha,
 }: {
   snapshots: Snapshot[];
   config: CategoryConfig;
   palette: Palette;
   metric: Metric;
   onSelectPoint: (commitSha: string) => void;
-  selectedSha: string | null;
 }) {
   const [mode, setMode] = useState<"daily" | "merge">(() =>
     new Set(snapshots.map((s) => s.timestamp.slice(0, 10))).size >= 2
       ? "daily"
       : "merge",
   );
-  const [showProjection, setShowProjection] = useState(true);
 
   const allSeries: SeriesMeta[] = useMemo(() => {
     const out: SeriesMeta[] = [
@@ -95,52 +91,17 @@ export function Zone1Hero({
     [snapshots, config, metric, mode],
   );
 
-  const projection = useMemo(
-    () =>
-      projectCompliance(
-        snapshots,
-        config,
-        metric,
-        EXAM_DATE,
-        COVERAGE_TARGET_PCT,
-      ),
-    [snapshots, config, metric],
-  );
-
-  const deadlineMs = Date.parse(EXAM_DATE);
-
-  // A forward projection is only meaningful when the fitted compliance-critical
-  // trajectory is actually rising toward the bar. With a flat or declining
-  // trend — or a single measured day, where no line can be fit — we show the
-  // measured points alone rather than drawing a misleading dashed line.
-  const projecting =
-    projection.fit !== null &&
-    projection.fit.slope > 0 &&
-    projection.projectedAtDeadline !== null;
-
   const data: ChartRow[] = useMemo(() => {
     const rows: ChartRow[] = points.map((pt) => {
       const row: ChartRow = {
-        t: Date.parse(pt.timestamp),
-        day: pt.day,
+        label: pt.day,
         __point: pt,
       };
       for (const s of allSeries) row[s.id] = pt.series[s.id] ?? null;
       return row;
     });
-    if (showProjection && projecting && rows.length) {
-      const last = points[points.length - 1];
-      const lastVal = last.series[COMPLIANCE_CRITICAL_ID];
-      (rows[rows.length - 1] as ChartRow).__projection = lastVal;
-      rows.push({
-        t: deadlineMs,
-        day: fmtDate(EXAM_DATE),
-        __projection: Math.min(100, projection.projectedAtDeadline!),
-        __point: last,
-      });
-    }
     return rows;
-  }, [points, allSeries, showProjection, projecting, projection, deadlineMs]);
+  }, [points, allSeries]);
 
   const toggleSeries = (id: string) => {
     setVisible((prev) => {
@@ -158,9 +119,7 @@ export function Zone1Hero({
 
   return (
     <section className="section" id="zone-hero">
-      <SectionHead eyebrow="Trend" title="Coverage over time">
-        Each point is a measured merge. Click a point for its attribution.
-      </SectionHead>
+      <SectionHead eyebrow="Trend" title="Coverage over time" />
 
       <div className="controls" style={{ marginBottom: "var(--s-5)" }}>
         <div className="row">
@@ -173,18 +132,6 @@ export function Zone1Hero({
             ]}
             value={mode}
             onChange={setMode}
-          />
-        </div>
-        <div className="row">
-          <span className="field-label">Projection</span>
-          <SegToggle
-            ariaLabel="Projection"
-            options={[
-              { value: "on", label: "On" },
-              { value: "off", label: "Off" },
-            ]}
-            value={showProjection ? "on" : "off"}
-            onChange={(v) => setShowProjection(v === "on")}
           />
         </div>
       </div>
@@ -228,11 +175,8 @@ export function Zone1Hero({
             >
               <CartesianGrid stroke={palette.ruleSoft} vertical={false} />
               <XAxis
-                dataKey="t"
-                type="number"
-                scale="time"
-                domain={["dataMin", projecting ? deadlineMs : "dataMax"]}
-                tickFormatter={(t: number) => fmtDate(new Date(t).toISOString())}
+                dataKey="label"
+                tickFormatter={(v: string) => fmtDate(v + "T00:00:00Z")}
                 stroke={palette.ink3}
                 tick={{
                   fontFamily: "var(--font-mono)",
@@ -271,27 +215,13 @@ export function Zone1Hero({
                 stroke={palette.ink4}
                 strokeDasharray="4 4"
                 label={{
-                  value: `Exam bar ${COVERAGE_TARGET_PCT}%`,
+                  value: `Goal ${COVERAGE_TARGET_PCT}%`,
                   position: "insideTopRight",
                   fill: palette.ink3,
                   fontSize: 12,
                   fontFamily: "var(--font-mono)",
                 }}
               />
-              {projecting && (
-                <ReferenceLine
-                  x={deadlineMs}
-                  stroke={palette.signal0}
-                  strokeDasharray="3 3"
-                  label={{
-                    value: `Exam ${fmtDateFull(EXAM_DATE)}`,
-                    position: "insideTopLeft",
-                    fill: palette.signal0,
-                    fontSize: 12,
-                    fontFamily: "var(--font-mono)",
-                  }}
-                />
-              )}
 
               {allSeries
                 .filter((s) => visible.has(s.id))
@@ -317,72 +247,11 @@ export function Zone1Hero({
                   );
                 })}
 
-              {showProjection && projecting && (
-                <Line
-                  type="linear"
-                  dataKey="__projection"
-                  stroke={palette.accent1}
-                  strokeWidth={1.5}
-                  strokeDasharray="2 4"
-                  dot={false}
-                  connectNulls
-                  isAnimationActive={false}
-                />
-              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
-        {projection.fit ? (
-          <ProjectionReadout projection={projection} />
-        ) : showProjection ? (
-          <p className="t-small muted" style={{ marginTop: "var(--s-3)" }}>
-            ■ Projection needs ≥2 distinct days; all merges landed on one.
-          </p>
-        ) : null}
-        {selectedSha ? null : (
-          <p className="t-small muted" style={{ marginTop: "var(--s-3)" }}>
-            ■ Click a point for its attribution.
-          </p>
-        )}
       </div>
     </section>
-  );
-}
-
-function ProjectionReadout({
-  projection,
-}: {
-  projection: ReturnType<typeof projectCompliance>;
-}) {
-  if (!projection.fit) return null;
-  const ratePerDay = projection.fit.slope;
-  const eta = projection.etaToTarget;
-  const onTrack =
-    eta !== null && Date.parse(eta) <= Date.parse(EXAM_DATE) && ratePerDay > 0;
-  return (
-    <div className="legend">
-      <span className="t-small muted">
-        Trajectory: <span className="num">{fmtSignedPts(ratePerDay)}</span>/day
-      </span>
-      <span className="t-small muted">
-        Projected at exam:{" "}
-        <span className="num">
-          {projection.projectedAtDeadline === null
-            ? "—"
-            : fmtPct(Math.min(100, projection.projectedAtDeadline))}
-        </span>
-      </span>
-      <span className="t-small">
-        {eta ? (
-          <span className={onTrack ? "delta-pos num" : "delta-neg num"}>
-            {onTrack ? "On track — " : "At risk — "}
-            reaches {projection.targetPct}% by {fmtDateFull(eta)}
-          </span>
-        ) : (
-          <span className="delta-neg">Not on track</span>
-        )}
-      </span>
-    </div>
   );
 }
 

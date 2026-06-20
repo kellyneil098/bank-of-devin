@@ -26,10 +26,9 @@ import {
 } from "recharts";
 import type { CategoryConfig, Pull, Snapshot } from "../lib/schema.ts";
 import { complianceBurndown } from "../lib/derive.ts";
-import { fmtDate, fmtDateFull, fmtInt, fmtPct, shortSession } from "../lib/format.ts";
-import { prUrl } from "../config.ts";
+import { fmtDate, fmtDateFull, fmtInt, fmtPct } from "../lib/format.ts";
 import { type Palette } from "../lib/theme.ts";
-import { Badge, Card, SectionHead } from "./primitives.tsx";
+import { Card, SectionHead } from "./primitives.tsx";
 
 export function CreativeViews({
   snapshots,
@@ -59,18 +58,6 @@ export function CreativeViews({
     ? burndown[burndown.length - 1].remaining
     : 0;
   const burnedDown = startRemaining - nowRemaining;
-
-  const failures = useMemo(
-    () =>
-      pulls
-        .filter((p) => p.review_verdict === "changes_requested" || p.human_rework)
-        .sort((a, b) =>
-          (b.merged_at ?? b.created_at).localeCompare(
-            a.merged_at ?? a.created_at,
-          ),
-        ),
-    [pulls],
-  );
 
   const mutated = useMemo(
     () => pulls.filter((p) => p.mutation_score !== null),
@@ -155,68 +142,6 @@ export function CreativeViews({
             · <span className="num">{fmtInt(nowRemaining)}</span> still uncovered.
           </p>
         </Card>
-      </section>
-
-      <section className="section" id="zone-failures">
-        <SectionHead
-          eyebrow="Risk & rework"
-          title="Rework & review risk"
-          signal
-        >
-          PRs with changes-requested reviews or human commits.
-        </SectionHead>
-        <div className="card card--flush">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>PR</th>
-                <th>Title</th>
-                <th>Signal</th>
-                <th style={{ textAlign: "right" }}>When</th>
-              </tr>
-            </thead>
-            <tbody>
-              {failures.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="muted">
-                    No rework or changes-requested PRs in this window.
-                  </td>
-                </tr>
-              ) : (
-                failures.map((p) => (
-                  <tr key={p.number}>
-                    <td className="num">
-                      <a href={prUrl(p.number)} target="_blank" rel="noreferrer">
-                        #{p.number}
-                      </a>
-                    </td>
-                    <td>
-                      <div>{p.title}</div>
-                      {p.session_url ? (
-                        <div className="t-small muted">
-                          session {shortSession(p.session_url)}
-                        </div>
-                      ) : null}
-                    </td>
-                    <td>
-                      <div className="chips">
-                        {p.review_verdict === "changes_requested" ? (
-                          <Badge tone="signal">changes requested</Badge>
-                        ) : null}
-                        {p.human_rework ? (
-                          <Badge tone="signal">human rework</Badge>
-                        ) : null}
-                      </div>
-                    </td>
-                    <td className="num muted" style={{ textAlign: "right" }}>
-                      {fmtDate(p.merged_at ?? p.created_at)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
       </section>
 
       {mutated.length > 0 ? (
