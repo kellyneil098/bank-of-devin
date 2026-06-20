@@ -1,9 +1,9 @@
 {
   "commit_sha": "5a9a41ef3930821c7492b0ab5cdb53a6139c286e",
-  "parent_sha": "9169a219a8fc2613eba9d4235deea39c20cda2f7",
-  "timestamp": "2026-06-20T05:44:25.887Z",
-  "trigger": "merge",
-  "pr_number": 22,
+  "parent_sha": "5a9a41ef3930821c7492b0ab5cdb53a6139c286e",
+  "timestamp": "2026-06-20T09:41:29.282Z",
+  "trigger": "daily",
+  "pr_number": null,
   "totals": {
     "lines_covered": 162,
     "lines_total": 802,
