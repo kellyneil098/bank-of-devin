@@ -23,7 +23,6 @@ import { readPalette } from "./lib/theme.ts";
 import {
   COVERAGE_TARGET_PCT,
   DEFAULT_METRIC,
-  EXAM_DATE,
   RAW_DATA_BASE_URL,
   REPO_NAME,
   REPO_OWNER,
@@ -168,13 +167,6 @@ function Dashboard({
     return m;
   }, [snapshots]);
 
-  const daysToExam = Math.max(
-    0,
-    Math.ceil(
-      (Date.parse(EXAM_DATE) - (latest ? Date.parse(latest.timestamp) : Date.now())) /
-        86_400_000,
-    ),
-  );
   const meetsBar = compliancePct >= COVERAGE_TARGET_PCT;
 
   // ----- Slide-deck navigation -----
@@ -339,12 +331,11 @@ function Dashboard({
             <span className="mono">
               {REPO_OWNER}/{REPO_NAME}
             </span>
-            . Target <span className="num">{COVERAGE_TARGET_PCT}%</span> by{" "}
-            {fmtDateFull(EXAM_DATE)}.
+            .
           </p>
         </header>
 
-        <div className="grid grid--4">
+        <div className="grid grid--3">
           <div className="card">
             <Stat
               label="Compliance-critical coverage"
@@ -375,14 +366,6 @@ function Dashboard({
               sub={latest ? `of ${fmtInt(latest.totals.lines_total)} measured` : ""}
             />
           </div>
-          <div className="card">
-            <Stat
-              label="Days to exam"
-              value={fmtInt(daysToExam)}
-              unit="d"
-              sub={fmtDateFull(EXAM_DATE)}
-            />
-          </div>
         </div>
       </section>
 
@@ -392,7 +375,6 @@ function Dashboard({
         palette={palette}
         metric={metric}
         onSelectPoint={selectPoint}
-        selectedSha={selectedSha}
       />
 
       <Zone2DrillDown

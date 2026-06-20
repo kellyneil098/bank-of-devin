@@ -52,7 +52,7 @@ export function Zone3Aggregate({ pulls }: { pulls: Pull[] }) {
         All PRs opened in this window.
       </SectionHead>
 
-      <div className="grid grid--4">
+      <div className="grid grid--3">
         <Card>
           <Stat
             label="PRs merged"
@@ -81,14 +81,6 @@ export function Zone3Aggregate({ pulls }: { pulls: Pull[] }) {
             sub="open → merge"
           />
         </Card>
-        <Card>
-          <Stat
-            label="Human rework rate"
-            value={fmtPct(stats.humanReworkRate * 100, 0)}
-            tone={stats.humanReworkRate > 0.25 ? "neg" : undefined}
-            sub="merged PRs needing human commits"
-          />
-        </Card>
       </div>
 
       <div className="grid grid--3" style={{ marginTop: "var(--gutter)" }}>
@@ -101,7 +93,7 @@ export function Zone3Aggregate({ pulls }: { pulls: Pull[] }) {
         </Card>
         <Card>
           <Stat
-            label="Analyst time saved"
+            label="Engineering time saved"
             value={fmtDurationHours(minutesSaved / 60)}
             sub={`${fmtInt(stats.testsAddedTotal)} tests × ${MINUTES_SAVED_PER_TEST}m each`}
           />
