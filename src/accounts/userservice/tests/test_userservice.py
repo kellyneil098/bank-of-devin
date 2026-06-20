@@ -1,11 +1,11 @@
 """Unit tests for the userservice authentication and account endpoints."""
 
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock
 
 import bcrypt
 import jwt
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
 from userservice.userservice import create_app
 from tests.constants import (
@@ -194,6 +194,99 @@ class TestUserservice(unittest.TestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("failed to create user", response.get_data(as_text=True))
+
+
+    def test_create_user_returns_400_for_empty_field_value(self):
+        """Validation logic: a request with all required fields present but one
+        containing an empty string value is rejected with 400."""
+        req = dict(EXAMPLE_USER_REQUEST)
+        req["firstname"] = ""
+
+        response = self.test_app.post("/users", data=req)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("missing value for input field", response.get_data(as_text=True))
+        self.db.add_user.assert_not_called()
+
+    def test_create_user_returns_400_for_username_too_short(self):
+        """Boundary condition: a username with fewer than 2 characters is rejected
+        with 400 even if otherwise alphanumeric."""
+        req = dict(EXAMPLE_USER_REQUEST)
+        req["username"] = "x"
+
+        response = self.test_app.post("/users", data=req)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("alphanumeric", response.get_data(as_text=True))
+        self.db.add_user.assert_not_called()
+
+    def test_startup_exits_on_db_connection_failure(self):
+        """Downstream failure: if the database is unreachable during startup,
+        the app logs critical and exits with code 1."""
+        with patch("userservice.userservice.open", mock_open(read_data=PRIVATE_KEY_PEM)):
+            with patch("os.environ", {
+                "VERSION": "v0.0.0-test",
+                "TOKEN_EXPIRY_SECONDS": "3600",
+                "PRIV_KEY_PATH": "/tmp/fake-priv-key",
+                "PUB_KEY_PATH": "/tmp/fake-pub-key",
+                "ACCOUNTS_DB_URI": "sqlite:///",
+                "ENABLE_TRACING": "false",
+            }):
+                with patch("userservice.userservice.UserDb") as mock_db:
+                    mock_db.side_effect = OperationalError(
+                        "conn", {}, Exception("refused")
+                    )
+                    with self.assertRaises(SystemExit) as ctx:
+                        create_app()
+                    self.assertEqual(ctx.exception.code, 1)
+
+    def test_startup_enables_tracing_when_configured(self):
+        """Initialization: when ENABLE_TRACING is 'true', the tracing provider
+        and Cloud Trace exporter are configured without error."""
+        with patch("userservice.userservice.open", mock_open(read_data=PRIVATE_KEY_PEM)):
+            with patch("os.environ", {
+                "VERSION": "v0.0.0-test",
+                "TOKEN_EXPIRY_SECONDS": "3600",
+                "PRIV_KEY_PATH": "/tmp/fake-priv-key",
+                "PUB_KEY_PATH": "/tmp/fake-pub-key",
+                "ACCOUNTS_DB_URI": "sqlite:///",
+                "ENABLE_TRACING": "true",
+            }):
+                with patch("userservice.userservice.UserDb"):
+                    with patch("userservice.userservice.CloudTraceSpanExporter"):
+                        with patch("userservice.userservice.BatchSpanProcessor"):
+                            with patch("userservice.userservice.FlaskInstrumentor") as mock_instr:
+                                app = create_app()
+                                mock_instr.return_value.instrument_app.assert_called_once_with(app)
+
+    def test_shutdown_handler_logs_info(self):
+        """Shutdown: the atexit _shutdown handler logs an info-level message
+        indicating the service is stopping."""
+        captured = []
+
+        def fake_register(func):
+            captured.append(func)
+            return func
+
+        with patch("userservice.userservice.atexit.register", side_effect=fake_register):
+            with patch("userservice.userservice.open", mock_open(read_data=PRIVATE_KEY_PEM)):
+                with patch("os.environ", {
+                    "VERSION": "v0.0.0-test",
+                    "TOKEN_EXPIRY_SECONDS": "3600",
+                    "PRIV_KEY_PATH": "/tmp/fake-priv-key",
+                    "PUB_KEY_PATH": "/tmp/fake-pub-key",
+                    "ACCOUNTS_DB_URI": "sqlite:///",
+                    "ENABLE_TRACING": "false",
+                }):
+                    with patch("userservice.userservice.UserDb"):
+                        app = create_app()
+
+        self.assertTrue(len(captured) > 0, "_shutdown was not registered")
+        shutdown_fn = captured[0]
+
+        with patch.object(app.logger, "info") as mock_log:
+            shutdown_fn()
+            mock_log.assert_called_with("Stopping userservice.")
 
 
 if __name__ == "__main__":
