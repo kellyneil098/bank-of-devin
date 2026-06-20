@@ -130,9 +130,11 @@ describe("buildTimeSeries", () => {
     expect(pts[1].prsMerged).toBe(1);
   });
 
-  it("merge mode yields a point per snapshot", () => {
+  it("merge mode yields only PR-associated snapshots", () => {
     const pts = buildTimeSeries([s0, s1], config, "line", "merge");
-    expect(pts.map((p) => p.commit_sha)).toEqual(["a", "b"]);
+    expect(pts.map((p) => p.commit_sha)).toEqual(["b"]);
+    expect(pts[0].pr_number).toBe(9);
+    expect(pts[0].delta).toBeNull();
   });
 });
 
