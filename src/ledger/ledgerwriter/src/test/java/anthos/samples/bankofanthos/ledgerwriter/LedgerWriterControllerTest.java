@@ -17,14 +17,18 @@
 package anthos.samples.bankofanthos.ledgerwriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.micrometer.core.instrument.binder.cache.GuavaCacheMetrics;
 import io.micrometer.stackdriver.StackdriverMeterRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
@@ -35,6 +39,8 @@ class LedgerWriterControllerTest {
     private static final String VERSION = "v0.0.0-test";
     private static final String LOCAL_ROUTING_NUM = "883745000";
     private static final String BALANCES_API_URI = "http://balances:8080/balances";
+    private static final String BEARER_TOKEN = "Bearer validtoken";
+    private static final String TOKEN = "validtoken";
 
     private JWTVerifier verifier;
     private StackdriverMeterRegistry meterRegistry;
@@ -72,5 +78,22 @@ class LedgerWriterControllerTest {
         ResponseEntity<?> response = controller.version();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(VERSION, response.getBody());
+    }
+
+    @Test
+    @DisplayName("Given JWT verification fails, return HTTP Status 401 UNAUTHORIZED")
+    void addTransactionFailsWhenJWTVerificationFails() {
+        // Given
+        Transaction transaction = mock(Transaction.class);
+        when(verifier.verify(TOKEN)).thenThrow(JWTVerificationException.class);
+
+        // When
+        final ResponseEntity<?> actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.UNAUTHORIZED, actualResult.getStatusCode());
+        assertEquals(LedgerWriterController.UNAUTHORIZED_CODE, actualResult.getBody());
     }
 }
