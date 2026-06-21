@@ -1,13 +1,13 @@
 {
-  "commit_sha": "3dc2194200f9ec137c974ea0b53f6e335a33482e",
-  "parent_sha": "f00b6f4490936d709f831c986fe6d951b82e4b26",
-  "timestamp": "2026-06-16T05:56:44.974Z",
+  "commit_sha": "9169a219a8fc2613eba9d4235deea39c20cda2f7",
+  "parent_sha": "a98a3077ed3c0c8cff1ef04dd8c5897441b39419",
+  "timestamp": "2026-06-20T04:16:43.059Z",
   "trigger": "merge",
-  "pr_number": 11,
+  "pr_number": 23,
   "totals": {
-    "lines_covered": 90,
+    "lines_covered": 162,
     "lines_total": 802,
-    "branches_covered": 5,
+    "branches_covered": 20,
     "branches_total": 58
   },
   "files": [
@@ -54,9 +54,9 @@
     {
       "path": "src/accounts/userservice/userservice.py",
       "language": "python",
-      "lines_covered": 47,
+      "lines_covered": 119,
       "lines_total": 121,
-      "branches_covered": 2,
+      "branches_covered": 17,
       "branches_total": 18
     },
     {

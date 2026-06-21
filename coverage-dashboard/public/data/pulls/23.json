@@ -1,0 +1,35 @@
+{
+  "number": 23,
+  "title": "test(userservice): add 5 auth coverage tests for validation, startup, tracing, and shutdown",
+  "branch": "devin/1781927505-userservice-auth-coverage",
+  "created_at": "2026-06-20T03:54:25Z",
+  "merged_at": "2026-06-20T04:14:43Z",
+  "merge_commit_sha": "9169a219a8fc2613eba9d4235deea39c20cda2f7",
+  "author": "devin-ai-integration[bot]",
+  "additions": 95,
+  "deletions": 2,
+  "files_changed": [
+    "src/accounts/userservice/tests/test_userservice.py"
+  ],
+  "tests_added_estimate": 5,
+  "session_url": "https://app.devin.ai/sessions/9c1c1441051d45cba7a45ad9f50402bc",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T03:58:12Z",
+      "body": "**Devin Review** found 1 potential issue.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/23\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    },
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T03:58:31Z",
+      "body": ""
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
