@@ -1,0 +1,49 @@
+{
+  "uncovered_bucket_label": "Uncategorized",
+  "categories": [
+    {
+      "id": "authentication",
+      "label": "Authentication",
+      "description": "JWT verification, login, and user-credential handling. Auth defects are exam-critical.",
+      "patterns": ["**/userservice/**", "**/*JWT*", "**/*Auth*"],
+      "compliance_critical": true
+    },
+    {
+      "id": "transaction_processing",
+      "label": "Transaction processing",
+      "description": "Ledger writes, balance reads, transaction validation and history — the money path.",
+      "patterns": [
+        "**/ledger/**",
+        "**/ledgermonolith/**",
+        "**/*Transaction*",
+        "**/*Balance*",
+        "**/*Ledger*"
+      ],
+      "compliance_critical": true
+    },
+    {
+      "id": "pii_handling",
+      "label": "PII handling",
+      "description": "Account holders, contacts, and personal data persistence subject to privacy controls.",
+      "patterns": [
+        "**/contacts/**",
+        "**/userservice/**",
+        "**/accounts/**",
+        "**/*Account*"
+      ],
+      "compliance_critical": true
+    },
+    {
+      "id": "audit_logging",
+      "label": "Audit logging",
+      "description": "Request/response tracing and ledger-read streaming that form the audit trail.",
+      "patterns": [
+        "**/LedgerReader.java",
+        "**/api_call.py",
+        "**/traced_thread_pool_executor.py",
+        "**/frontend.py"
+      ],
+      "compliance_critical": true
+    }
+  ]
+}

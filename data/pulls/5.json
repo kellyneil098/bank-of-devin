@@ -1,0 +1,29 @@
+{
+  "number": 5,
+  "title": "Remove unit tests from LedgerWriter service (~30% coverage target)",
+  "branch": "devin/1781142001-remove-ledgerwriter-tests",
+  "created_at": "2026-06-11T01:42:01Z",
+  "merged_at": "2026-06-14T20:32:09Z",
+  "merge_commit_sha": "c141c18739ac16ce58f6da303917c07f5d30ac45",
+  "author": "devin-ai-integration[bot]",
+  "additions": 0,
+  "deletions": 382,
+  "files_changed": [
+    "src/ledger/ledgerwriter/src/test/java/anthos/samples/bankofanthos/ledgerwriter/LedgerWriterControllerTest.java",
+    "src/ledger/ledgerwriter/src/test/java/anthos/samples/bankofanthos/ledgerwriter/TransactionValidatorTest.java"
+  ],
+  "tests_added_estimate": 0,
+  "session_url": "https://app.devin.ai/sessions/14917375987540af8a1da2a4dcdb1954",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-11T01:46:23Z",
+      "body": "**Devin Review** found 4 potential issues.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/5\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
