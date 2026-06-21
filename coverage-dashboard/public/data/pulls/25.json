@@ -1,0 +1,67 @@
+{
+  "number": 25,
+  "title": "fix(dashboard): filter out non-PR snapshots in Per merge chart view",
+  "branch": "devin/1781977268-fix-merge-view-dots",
+  "created_at": "2026-06-20T17:41:41Z",
+  "merged_at": "2026-06-20T22:36:48Z",
+  "merge_commit_sha": "5778eea49419e8926549e70adf23522b954c4a18",
+  "author": "devin-ai-integration[bot]",
+  "additions": 1092,
+  "deletions": 250,
+  "files_changed": [
+    "coverage-dashboard/__tests__/derive.test.ts",
+    "coverage-dashboard/public/data/manifest.json",
+    "coverage-dashboard/public/data/pulls/11.json",
+    "coverage-dashboard/public/data/pulls/16.json",
+    "coverage-dashboard/public/data/pulls/18.json",
+    "coverage-dashboard/public/data/pulls/20.json",
+    "coverage-dashboard/public/data/pulls/21.json",
+    "coverage-dashboard/public/data/pulls/8.json",
+    "coverage-dashboard/public/data/snapshots/3dc2194200f9ec137c974ea0b53f6e335a33482e.json",
+    "coverage-dashboard/public/data/snapshots/614c1112f693afa401dd288b94b0b02f20ce9391.json",
+    "coverage-dashboard/public/data/snapshots/a98a3077ed3c0c8cff1ef04dd8c5897441b39419.json",
+    "coverage-dashboard/public/data/snapshots/d5fb738b47fbceba970e21897197b793d2763e55.json",
+    "coverage-dashboard/public/data/snapshots/dd92ddd2fa63d52ddc2ba9ffdd8fd2d269bf61e4.json",
+    "coverage-dashboard/public/data/snapshots/f00b6f4490936d709f831c986fe6d951b82e4b26.json",
+    "coverage-dashboard/src/App.tsx",
+    "coverage-dashboard/src/components/CreativeViews.tsx",
+    "coverage-dashboard/src/components/Zone1Hero.tsx",
+    "coverage-dashboard/src/components/Zone3Aggregate.tsx",
+    "coverage-dashboard/src/lib/derive.ts"
+  ],
+  "tests_added_estimate": 4,
+  "session_url": "https://app.devin.ai/sessions/b3e0deae65994549895ace90443038b5",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T17:46:26Z",
+      "body": "**Devin Review** found 3 potential issues.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/25\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    },
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T17:48:10Z",
+      "body": ""
+    },
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T17:48:11Z",
+      "body": ""
+    },
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-20T17:48:12Z",
+      "body": ""
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}

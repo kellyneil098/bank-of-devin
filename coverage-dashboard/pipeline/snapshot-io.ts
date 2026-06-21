@@ -49,8 +49,17 @@ export function readManifest(dataDir: string): Manifest {
 export function writeSnapshot(dataDir: string, snapshot: Snapshot): string {
   const dir = join(dataDir, "snapshots");
   ensureDir(dir);
+  const filePath = join(dir, `${snapshot.commit_sha}.json`);
   const rel = `data/snapshots/${snapshot.commit_sha}.json`;
-  writeJson(join(dir, `${snapshot.commit_sha}.json`), snapshot);
+
+  if (existsSync(filePath) && snapshot.trigger === "daily") {
+    const existing = JSON.parse(readFileSync(filePath, "utf8")) as Snapshot;
+    if (existing.trigger === "merge") {
+      return rel;
+    }
+  }
+
+  writeJson(filePath, snapshot);
   return rel;
 }
 
@@ -83,8 +92,16 @@ export function upsertManifest(
   const sIdx = manifest.snapshots.findIndex(
     (s) => s.commit_sha === snapshot.commit_sha,
   );
-  if (sIdx === -1) manifest.snapshots.push(snapEntry);
-  else manifest.snapshots[sIdx] = snapEntry;
+  if (sIdx === -1) {
+    manifest.snapshots.push(snapEntry);
+  } else if (
+    manifest.snapshots[sIdx].trigger === "merge" &&
+    snapshot.trigger === "daily"
+  ) {
+    // Never overwrite a merge snapshot with a daily one.
+  } else {
+    manifest.snapshots[sIdx] = snapEntry;
+  }
 
   // Keep snapshots ordered by timestamp ascending (spec §5.4).
   manifest.snapshots.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
