@@ -16,76 +16,44 @@
 
 package anthos.samples.bankofanthos.ledgerwriter;
 
+import static anthos.samples.bankofanthos.ledgerwriter.ExceptionMessages.EXCEPTION_MESSAGE_WHEN_AUTHORIZATION_HEADER_NULL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.binder.cache.GuavaCacheMetrics;
-import io.micrometer.core.lang.Nullable;
-import io.micrometer.stackdriver.StackdriverConfig;
 import io.micrometer.stackdriver.StackdriverMeterRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 class LedgerWriterControllerTest {
 
-    private LedgerWriterController controller;
-
-    @Mock
-    private JWTVerifier verifier;
-    @Mock
-    private TransactionRepository transactionRepository;
-    @Mock
-    private TransactionValidator transactionValidator;
-    @Mock
-    private DecodedJWT jwt;
-    @Mock
-    private Claim claim;
-    @Mock
-    private Clock clock;
-
-    private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
-
     private static final String VERSION = "v0.0.0-test";
-    private static final String LOCAL_ROUTING_NUM = "123456789";
+    private static final String LOCAL_ROUTING_NUM = "883745000";
     private static final String BALANCES_API_URI = "http://balances:8080/balances";
-    private static final String BEARER_TOKEN = "Bearer token";
-    private static final String TOKEN = "token";
-    private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+
+    private JWTVerifier verifier;
+    private StackdriverMeterRegistry meterRegistry;
+    private TransactionRepository transactionRepository;
+    private TransactionValidator transactionValidator;
+    private LedgerWriterController controller;
+    private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
+        verifier = mock(JWTVerifier.class);
+        meterRegistry = mock(StackdriverMeterRegistry.class);
+        transactionRepository = mock(TransactionRepository.class);
+        transactionValidator = mock(TransactionValidator.class);
+
         guavaCacheMetricsMock = mockStatic(GuavaCacheMetrics.class);
-
-        StackdriverMeterRegistry meterRegistry = new StackdriverMeterRegistry(
-            new StackdriverConfig() {
-                @Override
-                public boolean enabled() {
-                    return false;
-                }
-
-                @Override
-                public String projectId() {
-                    return "test";
-                }
-
-                @Override
-                @Nullable
-                public String get(String key) {
-                    return null;
-                }
-            }, clock);
 
         controller = new LedgerWriterController(
                 verifier,
@@ -95,10 +63,6 @@ class LedgerWriterControllerTest {
                 LOCAL_ROUTING_NUM,
                 BALANCES_API_URI,
                 VERSION);
-
-        when(verifier.verify(TOKEN)).thenReturn(jwt);
-        when(jwt.getClaim(LedgerWriterController.JWT_ACCOUNT_KEY)).thenReturn(claim);
-        when(claim.asString()).thenReturn(AUTHED_ACCOUNT_NUM);
     }
 
     @AfterEach
@@ -107,13 +71,26 @@ class LedgerWriterControllerTest {
     }
 
     @Test
-    @DisplayName("Given version number in the environment, "
-            + "return a ResponseEntity with the version number")
     void version() {
-        final ResponseEntity actualResult = controller.version();
+        ResponseEntity<?> response = controller.version();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(VERSION, response.getBody());
+    }
 
+    @Test
+    @DisplayName("Given null Authorization header, return HTTP Status 400")
+    void addTransactionFailsWhenAuthorizationHeaderNull() {
+        // Given
+        Transaction transaction = mock(Transaction.class);
+
+        // When
+        final ResponseEntity<?> actualResult =
+                controller.addTransaction(null, transaction);
+
+        // Then
         assertNotNull(actualResult);
-        assertEquals(VERSION, actualResult.getBody());
-        assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
+        assertEquals(EXCEPTION_MESSAGE_WHEN_AUTHORIZATION_HEADER_NULL,
+                actualResult.getBody());
     }
 }
