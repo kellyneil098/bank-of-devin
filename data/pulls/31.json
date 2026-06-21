@@ -1,0 +1,38 @@
+{
+  "number": 31,
+  "title": "fix(pipeline): prevent daily snapshots from overwriting merge data",
+  "branch": "devin/1782081126-fix-daily-overwrite-merge",
+  "created_at": "2026-06-21T22:35:56Z",
+  "merged_at": "2026-06-21T22:46:44Z",
+  "merge_commit_sha": "2f3d0d3f3fcc8564ee72da6e9a3907dc1b769742",
+  "author": "devin-ai-integration[bot]",
+  "additions": 630,
+  "deletions": 22,
+  "files_changed": [
+    "coverage-dashboard/pipeline/snapshot-io.ts",
+    "coverage-dashboard/public/data/manifest.json",
+    "coverage-dashboard/public/data/pulls/22.json",
+    "coverage-dashboard/public/data/pulls/23.json",
+    "coverage-dashboard/public/data/pulls/25.json",
+    "coverage-dashboard/public/data/snapshots/3dc2194200f9ec137c974ea0b53f6e335a33482e.json",
+    "coverage-dashboard/public/data/snapshots/5778eea49419e8926549e70adf23522b954c4a18.json",
+    "coverage-dashboard/public/data/snapshots/5a9a41ef3930821c7492b0ab5cdb53a6139c286e.json",
+    "coverage-dashboard/public/data/snapshots/614c1112f693afa401dd288b94b0b02f20ce9391.json",
+    "coverage-dashboard/public/data/snapshots/9169a219a8fc2613eba9d4235deea39c20cda2f7.json",
+    "coverage-dashboard/public/data/snapshots/dd92ddd2fa63d52ddc2ba9ffdd8fd2d269bf61e4.json"
+  ],
+  "tests_added_estimate": 1,
+  "session_url": "https://app.devin.ai/sessions/b3e0deae65994549895ace90443038b5",
+  "reviews": [
+    {
+      "author": "devin-ai-integration[bot]",
+      "state": "COMMENTED",
+      "is_devin_review": true,
+      "submitted_at": "2026-06-21T22:38:27Z",
+      "body": "## ✅ Devin Review: No Issues Found\n\nDevin Review analyzed this PR and found no bugs or issues to report.\n\n<!-- devin-review-badge-begin -->\n<a href=\"https://app.devin.ai/review/kellyneil098/bank-of-devin/pull/31\" target=\"_blank\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://static.devin.ai/assets/gh-open-in-devin-review-dark.svg?v=1\">\n    <img src=\"https://static.devin.ai/assets/gh-open-in-devin-review-light.svg?v=1\" alt=\"Open in Devin Review\">\n  </picture>\n</a>\n<!-- devin-review-badge-end -->"
+    }
+  ],
+  "review_verdict": "commented",
+  "human_rework": true,
+  "mutation_score": null
+}
