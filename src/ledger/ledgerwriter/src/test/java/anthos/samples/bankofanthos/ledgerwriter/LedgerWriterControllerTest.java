@@ -16,14 +16,18 @@
 
 package anthos.samples.bankofanthos.ledgerwriter;
 
+import static anthos.samples.bankofanthos.ledgerwriter.ExceptionMessages.EXCEPTION_MESSAGE_DUPLICATE_TRANSACTION;
+
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.google.common.cache.Cache;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.binder.cache.GuavaCacheMetrics;
 import io.micrometer.core.lang.Nullable;
 import io.micrometer.stackdriver.StackdriverConfig;
 import io.micrometer.stackdriver.StackdriverMeterRegistry;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,6 +56,8 @@ class LedgerWriterControllerTest {
     @Mock
     private Claim claim;
     @Mock
+    private Transaction transaction;
+    @Mock
     private Clock clock;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
@@ -62,6 +68,7 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final String DUPLICATE_UUID = "duplicate-test-uuid";
 
     @BeforeEach
     void setUp() {
@@ -115,5 +122,30 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given duplicate transaction UUID already in cache, "
+            + "return HTTP Status 400")
+    @SuppressWarnings("unchecked")
+    void addTransactionFailsWhenDuplicateUuid() throws Exception {
+        // Given
+        Field cacheField =
+                LedgerWriterController.class.getDeclaredField("cache");
+        cacheField.setAccessible(true);
+        Cache<String, Long> cache =
+                (Cache<String, Long>) cacheField.get(controller);
+        cache.put(DUPLICATE_UUID, 123L);
+        when(transaction.getRequestUuid()).thenReturn(DUPLICATE_UUID);
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
+        assertEquals(EXCEPTION_MESSAGE_DUPLICATE_TRANSACTION,
+                actualResult.getBody());
     }
 }
