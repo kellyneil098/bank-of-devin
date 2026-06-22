@@ -28,12 +28,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -62,6 +64,13 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final String TO_ACCOUNT_NUM = "0987654321";
+    private static final String TO_ROUTING_NUM = "987654321";
+    private static final int SENDER_BALANCE = 5000;
+    private static final int TRANSACTION_AMOUNT = 100;
+
+    @Mock
+    private Transaction transaction;
 
     @BeforeEach
     void setUp() {
@@ -115,5 +124,32 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given a valid internal transaction with sufficient balance, "
+            + "return HTTP Status 201 CREATED")
+    void addTransactionSucceedsForInternalTransaction(TestInfo testInfo) {
+        // Given
+        LedgerWriterController spyController = spy(controller);
+        when(transaction.getFromRoutingNum()).thenReturn(LOCAL_ROUTING_NUM);
+        when(transaction.getFromAccountNum()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getToRoutingNum()).thenReturn(TO_ROUTING_NUM);
+        when(transaction.getToAccountNum()).thenReturn(TO_ACCOUNT_NUM);
+        when(transaction.getAmount()).thenReturn(TRANSACTION_AMOUNT);
+        when(transaction.getRequestUuid()).thenReturn(testInfo.getDisplayName());
+        doReturn(SENDER_BALANCE).when(spyController)
+                .getAvailableBalance(anyString(), anyString());
+
+        // When
+        final ResponseEntity actualResult =
+                spyController.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.CREATED, actualResult.getStatusCode());
+        assertEquals(LedgerWriterController.READINESS_CODE,
+                actualResult.getBody());
+        verify(transactionRepository).save(transaction);
     }
 }
