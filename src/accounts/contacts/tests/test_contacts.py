@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import patch, mock_open, MagicMock
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from contacts.contacts import create_app
 from tests.constants import (
     EXAMPLE_PUBLIC_KEY,
@@ -46,6 +48,21 @@ class TestContacts(unittest.TestCase):
         """Verify readiness endpoint returns 200."""
         response = self.test_app.get("/ready")
         self.assertEqual(response.status_code, 200)
+
+
+    def test_get_contacts_500_database_error(self):
+        """GET /contacts/<username> returns 500 when database throws SQLAlchemyError."""
+        # mock get_contacts to raise a database error
+        self.db.get_contacts.side_effect = SQLAlchemyError()
+        # send request
+        response = self.test_app.get(
+            "/contacts/{}".format(EXAMPLE_USER),
+            headers=EXAMPLE_HEADERS,
+        )
+        # assert 500 response code
+        self.assertEqual(response.status_code, 500)
+        # assert correct error message
+        self.assertEqual(response.data, b"failed to retrieve contacts list")
 
 
 if __name__ == "__main__":
