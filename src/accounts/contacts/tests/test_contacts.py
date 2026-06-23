@@ -47,6 +47,17 @@ class TestContacts(unittest.TestCase):
         response = self.test_app.get("/ready")
         self.assertEqual(response.status_code, 200)
 
+    def test_get_contacts_401_missing_jwt(self):
+        """GET /contacts/<username> without Authorization header returns 401."""
+        # send request with no auth header (When)
+        response = self.test_app.get(
+            "/contacts/{}".format(EXAMPLE_USER),
+        )
+        # assert 401 response code
+        self.assertEqual(response.status_code, 401)
+        # assert correct error message
+        self.assertEqual(response.data, b"authentication denied")
+
 
 if __name__ == "__main__":
     unittest.main()
