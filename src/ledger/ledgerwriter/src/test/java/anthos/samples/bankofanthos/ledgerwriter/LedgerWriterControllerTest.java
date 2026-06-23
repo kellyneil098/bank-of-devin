@@ -17,6 +17,7 @@
 package anthos.samples.bankofanthos.ledgerwriter;
 
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.micrometer.core.instrument.Clock;
@@ -115,5 +116,21 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given JWT verification fails, return HTTP Status 401 UNAUTHORIZED")
+    void addTransactionFailsWhenJWTVerificationFails() {
+        // Given
+        when(verifier.verify(TOKEN)).thenThrow(JWTVerificationException.class);
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(BEARER_TOKEN, mock(Transaction.class));
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(LedgerWriterController.UNAUTHORIZED_CODE, actualResult.getBody());
+        assertEquals(HttpStatus.UNAUTHORIZED, actualResult.getStatusCode());
     }
 }
