@@ -30,8 +30,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,6 +54,8 @@ class LedgerWriterControllerTest {
     @Mock
     private Claim claim;
     @Mock
+    private Transaction transaction;
+    @Mock
     private Clock clock;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
@@ -62,6 +66,8 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final String NON_LOCAL_ROUTING_NUM = "987654321";
+    private static final String EXCEPTION_MESSAGE = "unable to create transaction";
 
     @BeforeEach
     void setUp() {
@@ -115,5 +121,25 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given transactionRepository.save throws CannotCreateTransactionException, "
+            + "return HTTP Status 500")
+    void addTransactionFailsWhenCannotCreateTransactionException(TestInfo testInfo) {
+        // Given
+        when(transaction.getFromRoutingNum()).thenReturn(NON_LOCAL_ROUTING_NUM);
+        when(transaction.getRequestUuid()).thenReturn(testInfo.getDisplayName());
+        doThrow(new CannotCreateTransactionException(EXCEPTION_MESSAGE))
+                .when(transactionRepository).save(transaction);
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(EXCEPTION_MESSAGE, actualResult.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, actualResult.getStatusCode());
     }
 }
