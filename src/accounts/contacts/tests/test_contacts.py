@@ -1,13 +1,11 @@
 """Unit tests for the contacts service Flask endpoints."""
 
 import unittest
-from unittest.mock import patch, mock_open, MagicMock
+from unittest.mock import patch, mock_open
 
 from contacts.contacts import create_app
 from tests.constants import (
     EXAMPLE_PUBLIC_KEY,
-    EXAMPLE_HEADERS,
-    EXAMPLE_USER,
     LOCAL_ROUTING,
 )
 
