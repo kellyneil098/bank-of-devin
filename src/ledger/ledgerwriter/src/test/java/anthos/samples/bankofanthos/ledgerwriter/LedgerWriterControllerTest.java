@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,8 @@ class LedgerWriterControllerTest {
     @Mock
     private TransactionValidator transactionValidator;
     @Mock
+    private Transaction transaction;
+    @Mock
     private DecodedJWT jwt;
     @Mock
     private Claim claim;
@@ -58,6 +61,7 @@ class LedgerWriterControllerTest {
 
     private static final String VERSION = "v0.0.0-test";
     private static final String LOCAL_ROUTING_NUM = "123456789";
+    private static final String NON_LOCAL_ROUTING_NUM = "987654321";
     private static final String BALANCES_API_URI = "http://balances:8080/balances";
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
@@ -115,5 +119,24 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given a valid external transaction, return HTTP Status 201 CREATED")
+    void addTransactionReturnsCreatedForExternalTransaction(TestInfo testInfo) {
+        // Given
+        when(transaction.getFromRoutingNum()).thenReturn(NON_LOCAL_ROUTING_NUM);
+        when(transaction.getFromAccountNum()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getRequestUuid()).thenReturn(testInfo.getDisplayName());
+
+        // When
+        final ResponseEntity<?> actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.CREATED, actualResult.getStatusCode());
+        assertEquals(LedgerWriterController.READINESS_CODE, actualResult.getBody());
+        verify(transactionRepository).save(transaction);
     }
 }
