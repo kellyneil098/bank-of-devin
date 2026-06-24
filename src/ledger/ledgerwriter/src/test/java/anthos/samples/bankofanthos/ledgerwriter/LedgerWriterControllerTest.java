@@ -30,10 +30,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -53,6 +59,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private RestTemplate restTemplate;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -62,9 +70,10 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final int EXPECTED_BALANCE = 5000;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         initMocks(this);
         guavaCacheMetricsMock = mockStatic(GuavaCacheMetrics.class);
 
@@ -96,6 +105,10 @@ class LedgerWriterControllerTest {
                 BALANCES_API_URI,
                 VERSION);
 
+        Field restTemplateField = LedgerWriterController.class.getDeclaredField("restTemplate");
+        restTemplateField.setAccessible(true);
+        restTemplateField.set(controller, restTemplate);
+
         when(verifier.verify(TOKEN)).thenReturn(jwt);
         when(jwt.getClaim(LedgerWriterController.JWT_ACCOUNT_KEY)).thenReturn(claim);
         when(claim.asString()).thenReturn(AUTHED_ACCOUNT_NUM);
@@ -115,5 +128,31 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given a valid token and account number, "
+            + "getAvailableBalance returns the correct balance from the API")
+    void getAvailableBalanceReturnsCorrectBalance() {
+        // Given
+        ResponseEntity<Integer> balanceResponse =
+                new ResponseEntity<>(EXPECTED_BALANCE, HttpStatus.OK);
+        when(restTemplate.exchange(
+                anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class)))
+                .thenReturn(balanceResponse);
+
+        // When
+        int actualBalance = controller.getAvailableBalance(TOKEN, AUTHED_ACCOUNT_NUM);
+
+        // Then
+        assertEquals(EXPECTED_BALANCE, actualBalance);
+        verify(restTemplate).exchange(
+                eq(BALANCES_API_URI + "/" + AUTHED_ACCOUNT_NUM),
+                eq(HttpMethod.GET),
+                argThat(entity -> {
+                    String authHeader = entity.getHeaders().getFirst("Authorization");
+                    return ("Bearer " + TOKEN).equals(authHeader);
+                }),
+                eq(Integer.class));
     }
 }
