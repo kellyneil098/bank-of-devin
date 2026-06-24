@@ -28,12 +28,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -53,6 +56,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private Transaction transaction;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -115,5 +120,29 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given the transaction is internal and the balance service "
+            + "returns HTTP 500, return HTTP Status 500")
+    void addTransactionWhenHttpServerErrorExceptionThrown(TestInfo testInfo) {
+        // Given
+        LedgerWriterController spyController = spy(controller);
+        when(transaction.getFromRoutingNum()).thenReturn(LOCAL_ROUTING_NUM);
+        when(transaction.getFromAccountNum()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getRequestUuid()).thenReturn(testInfo.getDisplayName());
+        doThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
+                "server error")).when(spyController)
+                .getAvailableBalance(anyString(), anyString());
+
+        // When
+        final ResponseEntity actualResult =
+                spyController.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, actualResult.getStatusCode());
+        assertNotNull(actualResult.getBody());
+        assertTrue(actualResult.getBody().toString().contains("server error"));
     }
 }
