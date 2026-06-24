@@ -48,6 +48,8 @@ class LedgerWriterControllerTest {
     @Mock
     private TransactionValidator transactionValidator;
     @Mock
+    private Transaction transaction;
+    @Mock
     private DecodedJWT jwt;
     @Mock
     private Claim claim;
@@ -58,9 +60,11 @@ class LedgerWriterControllerTest {
 
     private static final String VERSION = "v0.0.0-test";
     private static final String LOCAL_ROUTING_NUM = "123456789";
+    private static final String NON_LOCAL_ROUTING_NUM = "987654321";
     private static final String BALANCES_API_URI = "http://balances:8080/balances";
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
+    private static final String RAW_TOKEN = "rawtoken123";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
 
     @BeforeEach
@@ -115,5 +119,28 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given token without Bearer prefix, "
+            + "token is passed as-is to verifier and returns HTTP 201")
+    void addTransactionSucceedsWhenTokenHasNoBearerPrefix() {
+        // Given
+        when(verifier.verify(RAW_TOKEN)).thenReturn(jwt);
+        when(jwt.getClaim(LedgerWriterController.JWT_ACCOUNT_KEY)).thenReturn(claim);
+        when(claim.asString()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getFromRoutingNum()).thenReturn(NON_LOCAL_ROUTING_NUM);
+        when(transaction.getRequestUuid()).thenReturn("test-uuid-no-bearer");
+
+        // When
+        final ResponseEntity<?> actualResult =
+                controller.addTransaction(RAW_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.CREATED, actualResult.getStatusCode());
+        assertEquals(LedgerWriterController.READINESS_CODE, actualResult.getBody());
+        verify(verifier).verify(RAW_TOKEN);
+        verify(transactionRepository).save(transaction);
     }
 }
