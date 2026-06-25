@@ -53,6 +53,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private Transaction transaction;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -115,5 +117,23 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given the Authorization header is null, return HTTP Status 400")
+    void addTransactionFailsWhenAuthorizationHeaderNull() {
+        // Given
+        final String nullBearerToken = null;
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(nullBearerToken, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(
+                ExceptionMessages.EXCEPTION_MESSAGE_WHEN_AUTHORIZATION_HEADER_NULL,
+                actualResult.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
     }
 }
