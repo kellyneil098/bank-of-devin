@@ -28,10 +28,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,6 +55,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private Transaction transaction;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -115,5 +119,29 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given the transaction is internal and the balance reader "
+            + "throws a ResourceAccessException, return HTTP Status 500")
+    void addTransactionWhenResourceAccessExceptionThrown(TestInfo testInfo) {
+        // Given
+        LedgerWriterController spyController = spy(controller);
+        when(transaction.getFromRoutingNum()).thenReturn(LOCAL_ROUTING_NUM);
+        when(transaction.getFromAccountNum()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getRequestUuid()).thenReturn(testInfo.getDisplayName());
+        final String exceptionMessage = "Balance service unreachable";
+        doThrow(new ResourceAccessException(exceptionMessage)).when(
+                spyController).getAvailableBalance(TOKEN, AUTHED_ACCOUNT_NUM);
+
+        // When
+        final ResponseEntity actualResult =
+                spyController.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(exceptionMessage, actualResult.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
+                actualResult.getStatusCode());
     }
 }
