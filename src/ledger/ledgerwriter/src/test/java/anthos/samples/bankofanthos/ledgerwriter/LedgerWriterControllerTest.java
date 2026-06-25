@@ -53,6 +53,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private Transaction transaction;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -62,6 +64,7 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final String NON_LOCAL_ROUTING_NUM = "987654321";
 
     @BeforeEach
     void setUp() {
@@ -115,5 +118,24 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given a valid external transaction, return HTTP Status 201")
+    void addTransactionSucceedsForValidExternalTransaction() {
+        // Given
+        when(transaction.getFromRoutingNum()).thenReturn(NON_LOCAL_ROUTING_NUM);
+        when(transaction.getRequestUuid()).thenReturn("test-uuid");
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(LedgerWriterController.READINESS_CODE,
+                actualResult.getBody());
+        assertEquals(HttpStatus.CREATED, actualResult.getStatusCode());
+        verify(transactionRepository).save(transaction);
     }
 }
