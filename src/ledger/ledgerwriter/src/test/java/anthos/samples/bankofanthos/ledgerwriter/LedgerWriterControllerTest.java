@@ -53,6 +53,8 @@ class LedgerWriterControllerTest {
     private Claim claim;
     @Mock
     private Clock clock;
+    @Mock
+    private Transaction transaction;
 
     private MockedStatic<GuavaCacheMetrics> guavaCacheMetricsMock;
 
@@ -62,6 +64,8 @@ class LedgerWriterControllerTest {
     private static final String BEARER_TOKEN = "Bearer token";
     private static final String TOKEN = "token";
     private static final String AUTHED_ACCOUNT_NUM = "1234567890";
+    private static final int SENDER_BALANCE = 40;
+    private static final int LARGER_THAN_SENDER_BALANCE = 1000;
 
     @BeforeEach
     void setUp() {
@@ -115,5 +119,29 @@ class LedgerWriterControllerTest {
         assertNotNull(actualResult);
         assertEquals(VERSION, actualResult.getBody());
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Given a local transfer where the sender balance is less "
+            + "than the transaction amount, return HTTP Status 400")
+    void addTransactionFailsWhenBalanceLessThanAmount() {
+        // Given
+        LedgerWriterController spyController = spy(controller);
+        when(transaction.getFromRoutingNum()).thenReturn(LOCAL_ROUTING_NUM);
+        when(transaction.getFromAccountNum()).thenReturn(AUTHED_ACCOUNT_NUM);
+        when(transaction.getAmount()).thenReturn(LARGER_THAN_SENDER_BALANCE);
+        doReturn(SENDER_BALANCE).when(spyController)
+                .getAvailableBalance(TOKEN, AUTHED_ACCOUNT_NUM);
+
+        // When
+        final ResponseEntity actualResult =
+                spyController.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
+        assertEquals(ExceptionMessages.EXCEPTION_MESSAGE_INSUFFICIENT_BALANCE,
+                actualResult.getBody());
+        verify(transactionRepository, never()).save(any(Transaction.class));
     }
 }
