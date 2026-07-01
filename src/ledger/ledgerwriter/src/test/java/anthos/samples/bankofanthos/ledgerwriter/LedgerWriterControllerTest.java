@@ -17,6 +17,7 @@
 package anthos.samples.bankofanthos.ledgerwriter;
 
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.micrometer.core.instrument.Clock;
@@ -47,6 +48,8 @@ class LedgerWriterControllerTest {
     private TransactionRepository transactionRepository;
     @Mock
     private TransactionValidator transactionValidator;
+    @Mock
+    private Transaction transaction;
     @Mock
     private DecodedJWT jwt;
     @Mock
@@ -104,6 +107,24 @@ class LedgerWriterControllerTest {
     @AfterEach
     void tearDown() {
         guavaCacheMetricsMock.close();
+    }
+
+    @Test
+    @DisplayName("Given JWT verification fails, return HTTP Status 401")
+    void addTransactionFailsWhenJWTVerificationFails() {
+        // Given
+        when(verifier.verify(TOKEN)).thenThrow(JWTVerificationException.class);
+
+        // When
+        final ResponseEntity actualResult =
+                controller.addTransaction(BEARER_TOKEN, transaction);
+
+        // Then
+        assertNotNull(actualResult);
+        assertEquals(HttpStatus.UNAUTHORIZED, actualResult.getStatusCode());
+        assertEquals(LedgerWriterController.UNAUTHORIZED_CODE,
+                actualResult.getBody());
+        verify(transactionRepository, never()).save(any());
     }
 
     @Test
